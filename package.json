@@ -1,0 +1,38 @@
+{
+  "name": "toitoi-admin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toitoi-co/toitoi-admin.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/toitoi-co/toitoi-admin/issues"
+  },
+  "homepage": "https://github.com/toitoi-co/toitoi-admin#readme",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "bookshelf": "^0.9.1",
+    "checkit": "^0.6.0",
+    "connect-session-knex": "^1.0.20",
+    "create-error": "^0.3.1",
+    "express": "^4.13.4",
+    "express-promise-router": "0.0.9",
+    "express-session": "^1.13.0",
+    "firebase": "^2.4.0",
+    "firebase-token-generator": "^2.0.0",
+    "knex": "^0.9.0",
+    "rfr": "^1.2.3",
+    "scrypt-for-humans": "^2.0.2"
+  },
+  "devDependencies": {
+    "babel-preset-es2015-node": "^5.0.2",
+    "sqlite3": "^3.1.1"
+  }
+}

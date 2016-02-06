@@ -3,3 +3,10 @@
 # Example .gitignore files: https://github.com/github/gitignore
 /bower_components/
 /node_modules/
+dev.sqlite
+dev.sqlite-journal
+test.sqlite
+test.sqlite-journal
+config.json
+npm-debug.log
+/notes/

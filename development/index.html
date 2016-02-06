@@ -1,0 +1,383 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Development testing</title>
+		<script src="https://code.jquery.com/jquery-2.2.0.js"></script>
+		<style>
+			pre {
+				background-color: silver;
+				padding: 16px;
+			}
+			
+			#text-error {
+				display: none;
+				color: red;
+			}
+			
+			#text-pending {
+				display: none;
+				color: silver;
+			}
+			
+			.tablist button.current {
+				font-weight: bold;
+				color: blue;
+			}
+			
+			.authentication-status {
+				margin: 16px 0px;
+				font-weight: bold;
+				font-size: 18px;
+			}
+			
+			.authentication-status .status {
+				display: none;
+			}
+			
+			.authentication-status .pending {
+				display: inline;
+			}
+			
+			.authentication-status .authenticated {
+				color: green;
+			}
+			
+			.authentication-status .unauthenticated {
+				color: red;
+			}
+			
+			.modify-user-form, .delete-user-form {
+				display: none;
+			}
+			
+			.template {
+				display: none;
+			}
+		</style>
+		<script>
+			function hideStatus() {
+				$("#text-pending").hide();
+				$("#text-error").hide();
+				$(".authentication-status .status").hide();
+			}
+
+			function setAuthStatus(authenticated) {
+				if (authenticated === "true") {
+					$(".authentication-status .status.authenticated").show();
+				} else {
+					$(".authentication-status .status.unauthenticated").show();
+				}
+			}
+
+			function switchTab(tab) {
+				$("section").hide();
+				$("section.tab-" + tab).show();
+
+				$(".tablist button").removeClass("current");
+				$(".tablist button[data-tab='" + tab + "']").addClass("current");
+			}
+			
+			function makeRequest(options, success, error) {
+				var data = (options.data != null) ? JSON.stringify(options.data) : undefined;
+				delete options.data;
+				
+				var combinedOptions = Object.assign({
+					data: data,
+					dataType: "json",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					success: function(data, _, status) {
+						hideStatus();
+						success(data);
+					},
+					error: function(status) {
+						hideStatus();
+						$("#text-error").show();
+						error(status.responseJSON);
+					},
+					complete: function(jqXHR) {
+						setAuthStatus(jqXHR.getResponseHeader("X-API-Authenticated"));
+					}
+				}, options);
+				
+				$.ajax(combinedOptions);
+			}
+			
+			function lookupUser(formData) {
+				makeRequest({
+					method: "get",
+					url: "/users/" + formData.id
+				}, function(data) {
+					setupUserForm(data);
+				}, function(data) {
+					$("#response").text(JSON.stringify(data, null, 4));
+				})
+			}
+
+			function setupUserForm(user) {
+				var form = $(".modify-user-form");
+				var template = form.find(".template");
+				
+				form.show().attr("action", "/users/" + user.id);
+				
+				form.find("div:not(.template)").remove();
+				
+				Object.keys(user).forEach(function(key) {
+					var item = template
+						.clone()
+						.removeClass("template")
+						.insertAfter(template);
+					
+					item.children(".key").text(key);
+					item.children("input").attr("name", key).val(user[key]);
+				})
+				
+				$(".delete-user-form").show().attr("action", "/users/" + user.id);
+			}
+			
+			$(function() {
+				$("section").hide();
+				$(".tablist button").on("click", function(event) {
+					switchTab($(this).data("tab"));
+				})
+				
+				$("form").each(function() {
+					var form = $(this);
+					
+					form.on("submit", function(event) {
+						event.preventDefault();
+						
+						hideStatus();
+						$("#response").text("...");
+						$("#text-pending").show();
+						
+						var data = {};
+						var dataArray = form.serializeArray();
+						
+						dataArray.forEach(function(item) {
+							/* For simplicity, pretend that arrays and nested objects don't exist. */
+							if (item.value !== "") {
+								if (item.value === "true") {
+									data[item.name] = true;
+								} else if (item.value === "false") {
+									data[item.name] = false;
+								} else if (/^[0-9]+$/.test(item.value)) {
+									data[item.name] = parseInt(item.value);
+								} else {
+									data[item.name] = item.value;
+								}
+							}
+						})
+						
+						if (form.data("handler") != null) {
+							var handler = window[form.data("handler")];
+							handler(data);
+						} else {
+							makeRequest({
+								method: form.attr("method"),
+								url: form.attr("action"),
+								data: data
+							}, function(data) {
+								$("#response").text(JSON.stringify(data, null, 4));
+							}, function(data) {
+								$("#response").text(JSON.stringify(data, null, 4));
+							});
+						}
+					})
+				});
+			})
+		</script>
+	</head>
+	<body>
+		<h1>
+			Response
+			<span id="text-pending">pending...</span>
+			<span id="text-error">ERROR</span>
+		</h1>
+		<pre id="response"></pre>
+		
+		<div class="authentication-status">
+			<strong>Authentication status:</strong>
+			<span class="status pending">...</span>
+			<span class="status unauthenticated">Unauthenticated</span>
+			<span class="status authenticated">Authenticated</span>
+		</div>
+		
+		<div class="tablist">
+			<div>
+				Auth:
+				<button data-tab="register">Register</button>
+				<button data-tab="login">Login</button>
+				<button data-tab="token">Generate Firebase token</button>
+				<button data-tab="logout">Log out</button>
+			</div>
+			
+			<div>
+				Roles:
+				<button data-tab="roles">List</button>
+			</div>
+			
+			<div>
+				Users:
+				<button data-tab="list-users">List</button>
+				<button data-tab="create-user">Create</button>
+				<button data-tab="modify-users">Lookup / Modify</button>
+			</div>
+		</div>
+		
+		<section class="tab-register">
+			<h1>Register</h1>
+			<form action="/register" method="post">
+				<div>
+					E-mail address:
+					<input type="text" name="email">
+				</div>
+				<div>
+					Password:
+					<input type="password" name="password">
+				</div>
+				<div>
+					First name:
+					<input type="text" name="firstName">
+				</div>
+				<div>
+					Last name:
+					<input type="text" name="lastName">
+				</div>
+
+				<button type="submit">Send</button>
+			</form>
+		</section>
+		
+		<section class="tab-login">
+			<h1>Login</h1>
+			<form action="/login" method="post">
+				<div>
+					E-mail address:
+					<input type="text" name="email">
+				</div>
+				<div>
+					Password:
+					<input type="password" name="password">
+				</div>
+
+				<button type="submit">Send</button>
+			</form>
+		</section>
+		
+		<section class="tab-token">
+			<h1>Generate Firebase token</h1>
+			<form action="/generate-token" method="post">
+				<button type="submit">Send</button>
+			</form>
+		</section>
+		
+		<section class="tab-logout">
+			<h1>Log out</h1>
+			<form action="/logout" method="post">
+				<button type="submit">Send</button>
+			</form>
+		</section>
+		
+		<section class="tab-roles">
+			<h1>List roles</h1>
+			<form action="/roles" method="get">
+				<button type="submit">Send</button>
+			</form>
+		</section>
+		
+		<section class="tab-list-users">
+			<h1>List users</h1>
+			<form action="/users" method="get">
+				<button type="submit">Send</button>
+			</form>
+		</section>
+		
+		<section class="tab-modify-users">
+			<h1>Lookup / modify users</h1>
+			<form action="/roles" method="get" data-handler="lookupUser">
+				<div>
+					ID:
+					<input type="text" name="id">
+				</div>
+				
+				<button type="submit">Lookup</button>
+			</form>
+			
+			<h2>Deletion</h2>
+			<form class="delete-user-form" action="about:blank" method="delete">
+				<button type="submit">Delete</button>
+			</form>
+			
+			<h2>Modification</h2>
+			<form class="modify-user-form" action="about:blank" method="put">
+				<div class="template" data-template="user-field">
+					<span class="key"></span>:
+					<input class="value" type="text" name="">
+				</div>
+				
+				<button type="submit">Save</button>
+			</form>
+		</section>
+		
+		<section class="tab-create-user">
+			<h1>Create user</h1>
+			<form class="create-user-form" action="/users" method="post">
+				<div>
+					<span class="key">E-mail address</span>:
+					<input class="value" type="text" name="email">
+				</div>
+				<div>
+					<span class="key">Password</span>:
+					<input class="value" type="text" name="password">
+				</div>
+				<div>
+					<span class="key">isActive</span>:
+					<input class="value" type="text" name="isActive">
+				</div>
+				<div>
+					<span class="key">Role</span>:
+					<input class="value" type="text" name="role">
+				</div>
+				
+				<hr>
+				
+				<div>
+					<span class="key">First name</span>:
+					<input class="value" type="text" name="firstName">
+				</div>
+				<div>
+					<span class="key">Last name</span>:
+					<input class="value" type="text" name="lastName">
+				</div>
+				<div>
+					<span class="key">Address line 1</span>:
+					<input class="value" type="text" name="address1">
+				</div>
+				<div>
+					<span class="key">Address line 2</span>:
+					<input class="value" type="text" name="address2">
+				</div>
+				<div>
+					<span class="key">Postal code</span>:
+					<input class="value" type="text" name="postalCode">
+				</div>
+				<div>
+					<span class="key">City</span>:
+					<input class="value" type="text" name="city">
+				</div>
+				<div>
+					<span class="key">State</span>:
+					<input class="value" type="text" name="state">
+				</div>
+				<div>
+					<span class="key">Country</span>:
+					<input class="value" type="text" name="country">
+				</div>
+				
+				<button type="submit">Send</button>
+			</form>
+		</section>
+	</body>
+</html>
