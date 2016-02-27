@@ -18,13 +18,16 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase}) {
 		hidden: ["hash"],
 		
 		defaults: {
-			isActive: true
+			isActive: true,
+			signupFlowCompleted: false
 		},
 		
 		parse: function(attributes) {
-			if (attributes.isActive != null) {
-				attributes.isActive = !!(attributes.isActive);
-			}
+			["isActive", "signupFlowCompleted"].forEach((attribute) => {
+				if (attributes[attribute] != null) {
+					attributes[attribute] = !!(attributes[attribute]);
+				}
+			})
 			
 			return attributes;
 		},
@@ -35,6 +38,7 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase}) {
 			"hash",
 			"role",
 			"isActive",
+			"signupFlowCompleted",
 			"firstName",
 			"lastName",
 			"address1",
@@ -51,6 +55,7 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase}) {
 		validationRules: checkit({
 			email: "email",
 			isActive: "boolean",
+			signupFlowCompleted: "boolean",
 			role: ["required", (val) => {
 				if (acl.getRoles().indexOf(val) === -1) {
 					throw new errors.ValidationError("The specified role does not exist.")

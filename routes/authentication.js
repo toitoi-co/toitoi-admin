@@ -8,6 +8,7 @@ const rfr = require("rfr");
 const apiRouter = rfr("lib/api-router");
 const errors = rfr("lib/errors");
 const copy = rfr("lib/copy-properties");
+const validatePassword = rfr("lib/validate-password");
 
 module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 	let router = apiRouter();
@@ -51,6 +52,36 @@ module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 		}]
 	});
 
+	router.apiRoute("/change-password", {
+		post: [acl.allow("member"), function(req, res, next) {
+			return Promise.try(() => {
+				return checkit({
+					password: ["required", validatePassword]
+				}).run(req.body);
+			}).then(() => {
+				if (req.currentUser.get("signupFlowCompleted") === true) {
+					if (req.body.oldPassword == null) {
+						throw new errors.UnauthorizedError("No previous password specified, but user is not a new user.");
+					} else {
+						return scrypt.verifyHash(req.body.oldPassword, req.currentUser.get("hash"));
+					}
+				}
+			}).then(() => {
+				return scrypt.hash(req.body.password);
+			}).then((hash) => {
+				req.currentUser.set("hash", hash);
+				return req.currentUser.save();
+			}).then((user) => {
+				res.status(204).end();
+			}).catch(scrypt.PasswordError, (err) => {
+				throw new errors.UnauthorizedError("Invalid previous password specified.");
+			}).catch(checkit.Error, (err) => {
+				throw new errors.ValidationError("One or more fields were invalid.", {errors: err.errors});
+			})
+			
+		}]
+	})
+	
 	router.apiRoute("/register", {
 		post: function(req, res, next) {
 			return Promise.try(() => {
@@ -58,15 +89,7 @@ module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 					email: ["required", "email"],
 					firstName: ["required"],
 					lastName: ["required"],
-					password: ["required", (value) => {
-						if (value.length < 8) {
-							throw new Error("Password must be at least 8 characters long.");
-						} else if (value.length > 1024) {
-							throw new Error("Password cannot be longer than 1024 characters.");
-						} else if (/^[a-zA-Z]+$/.test(value)) {
-							throw new Error("Password must contain at least one number or special character.");
-						}
-					}]
+					password: ["required", validatePassword]
 				}).run(req.body);
 			}).then(() => {
 				return scrypt.hash(req.body.password);
@@ -92,6 +115,7 @@ module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 	
 	router.apiRoute("/logout", {
 		post: [acl.allow("member"), function(req, res, next) {
+			// FIXME: Override X-API-Authenticated header
 			req.session.destroy();
 			res.status(204).end();
 		}]

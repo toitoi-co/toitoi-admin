@@ -209,6 +209,7 @@
 				Auth:
 				<button data-tab="register">Register</button>
 				<button data-tab="login">Login</button>
+				<button data-tab="change-password">Change password</button>
 				<button data-tab="token">Generate Firebase token</button>
 				<button data-tab="logout">Log out</button>
 			</div>
@@ -259,6 +260,22 @@
 				</div>
 				<div>
 					Password:
+					<input type="password" name="password">
+				</div>
+
+				<button type="submit">Send</button>
+			</form>
+		</section>
+		
+		<section class="tab-change-password">
+			<h1>Change password</h1>
+			<form action="/change-password" method="post">
+				<div>
+					Old password:
+					<input type="text" name="oldPassword">
+				</div>
+				<div>
+					New password:
 					<input type="password" name="password">
 				</div>
 
