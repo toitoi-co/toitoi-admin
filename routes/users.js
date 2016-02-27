@@ -75,7 +75,7 @@ module.exports = function({bookshelf}) {
 				}
 			}).then((hash) => {
 				if (hash != null) {
-					req.body.hash = null;
+					req.body.hash = hash;
 				}
 
 				/* This looks wrong. Surely a patch save is a PATCH, not a PUT? */
