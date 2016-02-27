@@ -115,7 +115,7 @@ module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 	
 	router.apiRoute("/logout", {
 		post: [acl.allow("member"), function(req, res, next) {
-			// FIXME: Override X-API-Authenticated header
+			res.header("X-API-Authenticated", "false");
 			req.session.destroy();
 			res.status(204).end();
 		}]
