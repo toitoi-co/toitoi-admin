@@ -8,6 +8,7 @@ const KnexSessionStore = require("connect-session-knex")(expressSession);
 const Firebase = require("firebase");
 const FirebaseTokenGenerator = require("firebase-token-generator");
 const rfr = require("rfr");
+const cors = require('cors');
 
 const sessionHandler = rfr("middleware/session-handler")
 const errorHandler = rfr("middleware/error-handler");
@@ -17,6 +18,9 @@ let config = require("./config.json")
 // FIXME: req.currentUser
 
 let app = express();
+
+/* permit cross-domain requests, esp when testing locally */
+app.use(cors());
 
 /* ACL setup */
 let acl = aclModule(function(req, res) {
@@ -82,20 +86,20 @@ Promise.try(() => {
 	app.disable("etag");
 
 	app.use(bodyParser.json());
-	
+
 	app.use(sessionHandler(state));
 
 	/* Route setup */
 	app.use(rfr("routes/authentication")(state));
 	app.use("/users", acl.allow("admin"), rfr("routes/users")(state));
 	app.use("/roles", acl.allow("admin"), rfr("routes/roles")(state));
-	
+
 	if (environment === "development") {
 		app.use(rfr("routes/development"));
 	}
 
 	/* Error handling */
 	app.use(errorHandler);
-	
+
 	app.listen(3000);
 })
