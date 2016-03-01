@@ -18,13 +18,11 @@ let config = require("./config.json")
 
 let app = express();
 
-/* permit cross-domain requests with local cms server, and allow for
-   session id cookie to be sent back with generate-token request */
-let corsOptions = {
+/* Allow cross-domain requests from the CMS development server, and allow access to cookies (and thus the session). */
+app.use(cors({
 	origin: 'http://localhost:4000',
 	credentials: true
-}
-app.use(cors(corsOptions));
+}));
 
 /* ACL setup */
 let acl = aclModule(function(req, res) {
