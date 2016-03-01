@@ -15,7 +15,6 @@ const errorHandler = rfr("middleware/error-handler");
 const aclModule = rfr("lib/acl");
 
 let config = require("./config.json")
-// FIXME: req.currentUser
 
 let app = express();
 
