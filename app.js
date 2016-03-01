@@ -18,12 +18,6 @@ let config = require("./config.json")
 
 let app = express();
 
-/* Allow cross-domain requests from the CMS development server, and allow access to cookies (and thus the session). */
-app.use(cors({
-	origin: 'http://localhost:4000',
-	credentials: true
-}));
-
 /* ACL setup */
 let acl = aclModule(function(req, res) {
 	/* This method could also return a Promise, and it'd still work. */
@@ -69,6 +63,14 @@ Promise.try(() => {
 
 	/* Model configuration */
 	rfr("models/user")(state);
+
+	if (environment === "development") {
+		/* Allow cross-domain requests from the CMS development server, and allow access to cookies (and thus the session). */
+		app.use(cors({
+			origin: 'http://localhost:4000',
+			credentials: true
+		}));
+	}
 
 	/* Session setup */
 	app.use(expressSession({
