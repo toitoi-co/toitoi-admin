@@ -30,6 +30,17 @@ There's currently a fairly direct mapping between the request format for many AP
 * __createdAt__: Timestamp, when the user account was registered.
 * __updatedAt__: Timestamp, when the properties of the user were last changed.
 
+## Preset
+
+Also known as a 'theme'.
+
+* __id__: Unique, numeric, auto-incremented ID for the preset.
+* __name__: The friendly name (display name) of the preset.
+* __description__: A more extensive description (in HTML).
+* __url__: Where the preset archive can be downloaded from.
+
+Will contain more metadata in the future, such as plan associations.
+
 # Routes
 
 ## Authentication
@@ -91,6 +102,35 @@ Only accessible to those with `member` role or above.
 Generates and returns a Firebase authentication token, that can be used to talk directly to Firebase. The token will be tied to the user (and their corresponding privileges), and replaces the direct username/password authentication in Firebase that Webhook used.
 
 The response will be an object with a single property, `token`, which contains the generated token.
+
+## Signed request generation
+
+In some cases, you may need to send a server-authenticated request to another component - for example, when sending a request to the `-generate` server to change the preset (theme), this request will first have to be authorized by `-admin` to ensure that users only use themes that their plan has access to.
+
+### POST /generate-signed-request/preset
+
+Only accessible to those with `member` role or above.
+
+Generates a server-signed request for changing the preset (theme) of a site. Expects the following:
+
+* __presetId__: The unique ID of the preset, as returned from `GET /presets`.
+* __hostname__: The hostname of the site to generate the request for.
+
+The response will be an object with a single property, `signedRequest`, which contains the server-signed request that was generated.
+
+Possible route-specific responses:
+
+* __403__: User is not allowed to select this preset. Message is one of the following; if not, this is an ACL issue instead.
+	* "This preset is not allowed for the current plan."
+	* "This preset has been disabled."
+
+## Preset management
+
+### GET /presets
+
+Only accessible to those with `member` role or above.
+
+Returns a list of all the currently existing presets (themes). The response will be an array of Preset objects.
 
 ## Role management
 
