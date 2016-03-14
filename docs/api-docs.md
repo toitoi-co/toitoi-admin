@@ -35,11 +35,34 @@ There's currently a fairly direct mapping between the request format for many AP
 Also known as a 'theme'.
 
 * __id__: Unique, numeric, auto-incremented ID for the preset.
+* __planId__: Which plan the preset is available for.
 * __name__: The friendly name (display name) of the preset.
 * __description__: A more extensive description (in HTML).
+* __thumbnail__: A URL to the thumbnail for the preset, if any.
 * __url__: Where the preset archive can be downloaded from.
+* __isEnabled__: Whether the preset is currently available.
+* __createdAt__: Timestamp, when the user account was registered.
+* __updatedAt__: Timestamp, when the properties of the user were last changed.
 
-Will contain more metadata in the future, such as plan associations.
+## Site
+
+* __id__: Unique, numeric, auto-incremented ID for the site.
+* __planId__: The ID of the current plan of the site.
+* __userId__: The user that owns the site.
+* __siteName__: The name (title) of the site.
+* __subdomainName__: The subdomain for the site - only the part before the first dot.
+* __domainName__: The custom domain for the site, if applicable.
+* __createdAt__: Timestamp, when the user account was registered.
+* __updatedAt__: Timestamp, when the properties of the user were last changed.
+
+## Plan
+
+* __id__: Unique, numeric, auto-incremented ID for the plan.
+* __name__: The friendly name (display name) of the plan.
+* __createdAt__: Timestamp, when the user account was registered.
+* __updatedAt__: Timestamp, when the properties of the user were last changed.
+
+More details will be added later.
 
 # Routes
 
