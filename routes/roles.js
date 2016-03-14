@@ -11,7 +11,7 @@ module.exports = function({acl}) {
 
 	router.apiRoute("/", {
 		get: function(req, res) {
-			Promise.try(() => {
+			return Promise.try(() => {
 				return acl.getRoles();
 			}).then((roles) => {
 				res.json(roles);
