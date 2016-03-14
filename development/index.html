@@ -104,37 +104,42 @@
 				$.ajax(combinedOptions);
 			}
 			
-			function lookupUser(formData) {
-				makeRequest({
-					method: "get",
-					url: "/users/" + formData.id
-				}, function(data) {
-					setupUserForm(data);
-				}, function(data) {
-					$("#response").text(JSON.stringify(data, null, 4));
-				})
+			function createLookup(type, apiPath) {
+				function setupForm(item) {
+					var form = $(".modify-form[data-type='" + type + "']");
+					var template = form.find(".template[data-template='modify-field']");
+
+					form.show().attr("action", apiPath + "/" + item.id);
+
+					form.find("div:not(.template)").remove();
+
+					Object.keys(item).forEach(function(key) {
+						var element = template
+							.clone()
+							.removeClass("template")
+							.appendTo(template.parent());
+
+						element.children(".key").text(key);
+						element.children("input").attr("name", key).val(item[key]);
+					})
+
+					$(".delete-form[data-type='" + type + "']").show().attr("action", apiPath + "/" + item.id);
+				}
+				
+				return function(formData) {
+					makeRequest({
+						method: "get",
+						url: apiPath + "/" + formData.id
+					}, function(data) {
+						console.log(data);
+						setupForm(data);
+					}, function(data) {
+						$("#response").text(JSON.stringify(data, null, 4));
+					});
+				}
 			}
 
-			function setupUserForm(user) {
-				var form = $(".modify-user-form");
-				var template = form.find(".template");
-				
-				form.show().attr("action", "/users/" + user.id);
-				
-				form.find("div:not(.template)").remove();
-				
-				Object.keys(user).forEach(function(key) {
-					var item = template
-						.clone()
-						.removeClass("template")
-						.appendTo(template.parent());
-					
-					item.children(".key").text(key);
-					item.children("input").attr("name", key).val(user[key]);
-				})
-				
-				$(".delete-user-form").show().attr("action", "/users/" + user.id);
-			}
+			var lookupUser = createLookup("user", "/users");
 			
 			$(function() {
 				$("section").hide();
@@ -323,13 +328,13 @@
 			</form>
 			
 			<h2>Deletion</h2>
-			<form class="delete-user-form" action="about:blank" method="delete">
+			<form data-type="user" class="delete-form" action="about:blank" method="delete">
 				<button type="submit">Delete</button>
 			</form>
 			
 			<h2>Modification</h2>
-			<form class="modify-user-form" action="about:blank" method="put">
-				<div class="template" data-template="user-field">
+			<form data-type="user" class="modify-form" action="about:blank" method="put">
+				<div class="template" data-template="modify-field">
 					<span class="key"></span>:
 					<input class="value" type="text" name="">
 				</div>
