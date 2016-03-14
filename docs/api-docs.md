@@ -149,7 +149,7 @@ Possible route-specific responses:
 
 ## Preset management
 
-### GET /presets
+### GET /admin/presets
 
 Only accessible to those with `member` role or above.
 
@@ -159,7 +159,7 @@ Returns a list of all the currently existing presets (themes). The response will
 
 All of these routes are currently restricted to those with an `admin` role.
 
-### GET /roles
+### GET /admin/roles
 
 Returns a list of all the currently existing ACL roles. The response will be an array of strings, each representing a role name.
 
@@ -167,11 +167,11 @@ Returns a list of all the currently existing ACL roles. The response will be an 
 
 All of these routes are currently restricted to those with an `admin` role.
 
-### GET /users
+### GET /admin/users
 
 Returns a list of all User objects.
 
-### POST /users
+### POST /admin/users
 
 Creates a new user. Any User property may be specified, except for `hash` - instead, specify a `password`. Database constraints apply, and a `password` is required for now.
 
@@ -181,15 +181,15 @@ Possible route-specific responses:
 	* "Setting the hash directly is not allowed."
 	* "A password must be specified."
 
-### GET /users/:userId
+### GET /admin/users/:userId
 
 Returns the User object with the given `:userId`.
 
-### PUT /users/:userId
+### PUT /admin/users/:userId
 
 Changes one or more fields in the User object with the given `:userId`. Note that this will be a __patch__, and does *not* replace the full User object. Only changed fields currently need to be specified.
 
-### DELETE /users/:userId
+### DELETE /admin/users/:userId
 
 Delets the User object with the given `:userId`.
 
