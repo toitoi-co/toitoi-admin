@@ -127,7 +127,7 @@
 					var item = template
 						.clone()
 						.removeClass("template")
-						.insertAfter(template);
+						.appendTo(template.parent());
 					
 					item.children(".key").text(key);
 					item.children("input").attr("name", key).val(user[key]);
