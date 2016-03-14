@@ -7,6 +7,9 @@ const rfr = require("rfr");
 
 const errors = rfr("lib/errors");
 const encodeKey = rfr("lib/firebase/encode-key");
+const checkAllowedAttributes = rfr("lib/model/check-allowed-attributes");
+const saveValidationHook = rfr("lib/model/save-validation-hook");
+const parseBooleanFields = rfr("lib/model/parse-boolean-fields");
 
 module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, firebaseAuthenticationPromise}) {
 	// FIXME: Pass in tokenGenerator as state
@@ -23,13 +26,7 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 		},
 		
 		parse: function(attributes) {
-			["isActive", "signupFlowCompleted"].forEach((attribute) => {
-				if (attributes[attribute] != null) {
-					attributes[attribute] = !!(attributes[attribute]);
-				}
-			})
-			
-			return attributes;
+			return parseBooleanFields(attributes, ["isActive", "signupFlowCompleted"]);
 		},
 		
 		validAttributes: [
@@ -63,23 +60,10 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 			}]
 		}),
 		
-		checkAllowedAttributes: function() {
-			Object.keys(this.attributes).forEach((attribute) => {
-				if (this.validAttributes.indexOf(attribute) === -1) {
-					throw new errors.ValidationError(`'${attribute}' is not an allowed attribute on User models.`)
-				}
-			});
-		},
+		checkAllowedAttributes: checkAllowedAttributes("User"),
 		
 		initialize: function() {
-			this.on("saving", function() {
-				return Promise.all([
-					this.validationRules.run(this.attributes),
-					this.checkAllowedAttributes()
-				]).catch(checkit.Error, (err) => {
-					throw new errors.ValidationError("One or more fields were invalid.", {errors: err.errors})
-				});
-			});
+			this.on("saving", saveValidationHook);
 			
 			this.on("created", function() {
 				/* FIXME: Should do insert on Firebase first, but this is not possible because
