@@ -1,0 +1,17 @@
+{
+	"database": {
+		"database": "foo",
+		"username": "bar",
+		"password": "baz"
+	},
+	"firebase": {
+		"name": "toitoidev",
+		"secret": "<firebase secret goes here>",
+		"tokenExpiry": 86400,
+		"adminTokenExpiry": 31536000
+	},
+	"sessions": {
+		"secret": "<session cookie secret goes here>",
+		"cookieExpiry": 86400
+	}
+}
