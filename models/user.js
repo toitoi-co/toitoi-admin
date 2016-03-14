@@ -8,7 +8,7 @@ const rfr = require("rfr");
 const errors = rfr("lib/errors");
 const encodeKey = rfr("lib/firebase/encode-key");
 
-module.exports = function({bookshelf, acl, firebaseConfiguration, firebase}) {
+module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, firebaseAuthenticationPromise}) {
 	// FIXME: Pass in tokenGenerator as state
 	let tokenGenerator = new FirebaseTokenGenerator(firebaseConfiguration.secret);
 	
@@ -86,6 +86,8 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase}) {
 				 *        Firebase does not offer any kind of exclusive write function.
 				 */
 				return Promise.try(() => {
+					return firebaseAuthenticationPromise;
+				}).then(() => {
 					return firebase
 						.child(`management/users/${encodeKey(this.get("email"))}/exists`)
 						.set(true);

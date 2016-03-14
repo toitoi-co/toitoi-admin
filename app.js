@@ -41,25 +41,49 @@ bookshelf.plugin("registry");
 bookshelf.plugin("visibility");
 
 /* Firebase admin setup */
-let firebaseToken = (new FirebaseTokenGenerator(config.firebase.secret)).createToken({
-	uid: "-admin-api"
-}, {
-	expires: Date.now() + 31536000, // FIXME: Add reauthentication logic
-	admin: true
-});
+let tokenGenerator = new FirebaseTokenGenerator(config.firebase.secret)
+
+function generateFirebaseToken() {
+	return tokenGenerator.createToken({
+		uid: "-admin-api"
+	}, {
+		expires: (Date.now() / 1000) + config.firebase.adminTokenExpiry,
+		admin: true
+	});
+}
+
+function authenticateFirebase() {
+	return firebase.authWithCustomToken(generateFirebaseToken());
+}
+
+/* The following hack is needed because Firebase apparently does not have a reasonable token expiry mechanism, and can't queue up our calls while waiting for auth to be re-established... */
+let firebaseAuthenticationPromise;
 
 let firebase = new Firebase(`https://${config.firebase.name}.firebaseio.com`);
 
 Promise.try(() => {
-	return firebase.authWithCustomToken(firebaseToken);
+	firebaseAuthenticationPromise = authenticateFirebase();
+	return firebaseAuthenticationPromise;
 }).then(() => {
 	/* State object for dependency injection */
 	let state = {
 		bookshelf: bookshelf,
 		acl: acl,
 		firebaseConfiguration: config.firebase,
-		firebase: firebase
+		firebase: firebase,
+		firebaseAuthenticationPromise: firebaseAuthenticationPromise
 	}
+	
+	firebase.onAuth(function(authData) {
+		if (authData == null) {
+			/* We were unauthenticated. */
+			console.log("Regenerating Firebase auth token...");
+			state.firebaseAuthenticationPromise = authenticateFirebase();
+			state.firebaseAuthenticationPromise.then(() => {
+				console.log("Regenerated!");
+			})
+		}
+	});
 
 	/* Model configuration */
 	rfr("models/user")(state);
