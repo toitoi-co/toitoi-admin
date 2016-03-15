@@ -13,5 +13,6 @@
 	"sessions": {
 		"secret": "<session cookie secret goes here>",
 		"cookieExpiry": 86400
-	}
+	},
+	"hostedDomain": "example.com"
 }
