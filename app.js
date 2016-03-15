@@ -123,6 +123,8 @@ Promise.try(() => {
 
 	/* Route setup */
 	app.use(rfr("routes/authentication")(state));
+	app.use("/presets", acl.allow("member"), rfr("routes/presets")(state));
+	
 	app.use("/admin/users", acl.allow("admin"), rfr("routes/admin/users")(state));
 	app.use("/admin/roles", acl.allow("admin"), rfr("routes/admin/roles")(state));
 	app.use("/admin/plans", acl.allow("admin"), rfr("routes/admin/plans")(state));
