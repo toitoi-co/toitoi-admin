@@ -18,30 +18,19 @@ module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 			return Promise.try(() => {
 				return Promise.all([
 					bookshelf.model("Preset").fetchAll(),
-					req.currentUser.load("sites.plan")
+					req.currentUser.getPlan()
 				]);
-			}).spread((presets, _) => {
-				let presetList = presets.toJSON();
-				let currentPlan;
-				
-				let sites = req.currentUser.related("sites");
-				
-				if (sites.length > 0) {
-					let primarySite = sites.at(0);
-					currentPlan = primarySite.related("plan").get("id");
-				}
-				
-				return presetList.map((preset) => {
-					let available;
+			}).spread((presets, plan) => {
+				return presets.map((preset) => {
+					let presetJson = preset.toJSON();
 					
-					if (currentPlan == null) {
-						available = false;
+					if (plan == null) {
+						presetJson.isAvailable = false;
 					} else {
-						available = (currentPlan === preset.planId);
+						presetJson.isAvailable = preset.isAllowed(plan);
 					}
 					
-					preset.isAvailable = available;
-					return preset;
+					return presetJson;
 				})
 			}).then((presets) => {
 				res.json(presets);

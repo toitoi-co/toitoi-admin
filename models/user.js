@@ -94,6 +94,32 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 				email: this.get("email"),
 				provider: "admin-api"
 			}, options);
+		},
+		
+		/* TEMPORARY: The following only applies to the MVP, where each user can have exactly one site. */
+		getPrimarySite: function() {
+			return Promise.try(() => {
+				return this.load("sites");
+			}).then(() => {
+				let sites = this.related("sites");
+				
+				if (sites.length > 0) {
+					return sites.at(0);
+				} // FIXME: Throw an Error if the user has no sites?
+			})
+		},
+		getPlan: function() {
+			return Promise.try(() => {
+				return this.getPrimarySite();
+			}).then((site) => {
+				if (site != null) {
+					return Promise.try(() => {
+						return site.load("plan");
+					}).then(() => {
+						return site.related("plan");
+					});
+				}
+			});
 		}
 	})
 }

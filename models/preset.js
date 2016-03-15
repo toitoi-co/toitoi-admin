@@ -48,6 +48,10 @@ module.exports = function({bookshelf}) {
 		
 		initialize: function() {
 			this.on("saving", saveValidationHook);
+		},
+		
+		isAllowed: function(plan) {
+			return (plan.get("id") === this.get("planId"));
 		}
 	})
 }
