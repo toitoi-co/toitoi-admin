@@ -223,6 +223,13 @@
 			</div>
 			
 			<div>
+				Presets:
+				<button data-tab="presets">List</button>
+			</div>
+			
+			<hr>
+			
+			<div>
 				Roles (admin-only):
 				<button data-tab="admin-roles">List</button>
 			</div>
@@ -254,6 +261,8 @@
 				<button data-tab="admin-create-preset">Create</button>
 				<button data-tab="admin-modify-presets">Lookup / Modify</button>
 			</div>
+			
+			<hr>
 		</div>
 		
 		<section class="tab-register">
@@ -322,6 +331,13 @@
 		<section class="tab-logout">
 			<h1>Log out</h1>
 			<form action="/logout" method="post">
+				<button type="submit">Send</button>
+			</form>
+		</section>
+		
+		<section class="tab-presets">
+			<h1>Presets</h1>
+			<form action="/presets" method="get">
 				<button type="submit">Send</button>
 			</form>
 		</section>
