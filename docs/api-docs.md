@@ -13,6 +13,7 @@ Each method specifies the specific types of errors that it might return. In some
 * any -> __401__: The user is not authenticated, but the endpoint requires authentication.
 * any -> __403__: The user is authenticated, but the ACL does not allow them the requested access to this endpoint.
 * any -> __404__: The given route or object was not found.
+* DELETE -> __409__: Deletion failed because the object already doesn't exist anymore. The conditions under which this error can occur are currently unclear, as this was not documented in the previous version of this codebase, but it may be related to a race condition.
 * POST/PUT -> __422__: One or more fields failed the validation rules. The error response m ay contain an `errors` property with more details, formatted like the output of `checkit`'s `checkit.error#errors` property.
 
 # Models
@@ -64,7 +65,7 @@ Also known as a 'theme'.
 
 More details will be added later.
 
-# Routes
+# User routes
 
 ## Authentication
 
@@ -147,52 +148,20 @@ Possible route-specific responses:
 	* "This preset is not allowed for the current plan."
 	* "This preset has been disabled."
 
-## Preset management
+## Presets
 
-### GET /admin/presets
+### GET /presets
 
 Only accessible to those with `member` role or above.
 
 Returns a list of all the currently existing presets (themes). The response will be an array of Preset objects.
 
-## Role management
+Each Preset object will also contain an additional `isAvailable` property, indicating whether the user can select this preset on their current plan.
 
-All of these routes are currently restricted to those with an `admin` role.
+# Administrative routes
 
-### GET /admin/roles
-
-Returns a list of all the currently existing ACL roles. The response will be an array of strings, each representing a role name.
-
-## User management
-
-All of these routes are currently restricted to those with an `admin` role.
-
-### GET /admin/users
-
-Returns a list of all User objects.
-
-### POST /admin/users
-
-Creates a new user. Any User property may be specified, except for `hash` - instead, specify a `password`. Database constraints apply, and a `password` is required for now.
-
-Possible route-specific responses:
-
-* __422__: Custom validation failed. Message is one of:
-	* "Setting the hash directly is not allowed."
-	* "A password must be specified."
-
-### GET /admin/users/:userId
-
-Returns the User object with the given `:userId`.
-
-### PUT /admin/users/:userId
-
-Changes one or more fields in the User object with the given `:userId`. Note that this will be a __patch__, and does *not* replace the full User object. Only changed fields currently need to be specified.
-
-### DELETE /admin/users/:userId
-
-Delets the User object with the given `:userId`.
-
-Possible route-specific responses:
-
-* __409__: Deletion failed because the object already doesn't exist anymore. The conditions under which this error can occur are currently unclear, as this was not documented in the previous version of this codebase, but it may be related to a race condition.
+* [Role management](api/role-management.md)
+* [User management](api/user-management.md)
+* [Plan management](api/plan-management.md)
+* [Preset management](api/preset-management.md)
+* [Site management](api/site-management.md)
