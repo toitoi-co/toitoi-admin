@@ -28,9 +28,11 @@
     "express-session": "^1.13.0",
     "firebase": "^2.4.0",
     "firebase-token-generator": "^2.0.0",
+    "jsonwebtoken-promisified": "^1.0.2",
     "knex": "^0.9.0",
     "rfr": "^1.2.3",
-    "scrypt-for-humans": "^2.0.2"
+    "scrypt-for-humans": "^2.0.2",
+    "uuid": "^2.0.1"
   },
   "devDependencies": {
     "babel-preset-es2015-node": "^5.0.2",

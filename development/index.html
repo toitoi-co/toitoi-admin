@@ -227,6 +227,11 @@
 				<button data-tab="presets">List</button>
 			</div>
 			
+			<div>
+				Signed requests:
+				<button data-tab="signed-request-preset">Change preset</button>
+			</div>
+			
 			<hr>
 			
 			<div>
@@ -338,6 +343,22 @@
 		<section class="tab-presets">
 			<h1>Presets</h1>
 			<form action="/presets" method="get">
+				<button type="submit">Send</button>
+			</form>
+		</section>
+		
+		<section class="tab-signed-request-preset">
+			<h1>Presets</h1>
+			<form action="/generate-signed-request/preset" method="post">
+				<div>
+					Hostname:
+					<input type="text" name="hostname">
+				</div>
+				<div>
+					Preset ID:
+					<input type="text" name="presetId">
+				</div>
+				
 				<button type="submit">Send</button>
 			</form>
 		</section>

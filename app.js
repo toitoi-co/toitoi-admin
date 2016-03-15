@@ -124,6 +124,7 @@ Promise.try(() => {
 	/* Route setup */
 	app.use(rfr("routes/authentication")(state));
 	app.use("/presets", acl.allow("member"), rfr("routes/presets")(state));
+	app.use("/generate-signed-request", acl.allow("member"), rfr("routes/signed-requests")(state));
 	
 	app.use("/admin/users", acl.allow("admin"), rfr("routes/admin/users")(state));
 	app.use("/admin/roles", acl.allow("admin"), rfr("routes/admin/roles")(state));
