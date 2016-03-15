@@ -20,6 +20,10 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 		hasTimestamps: ["createdAt", "updatedAt"],
 		hidden: ["hash"],
 		
+		sites: function() {
+			return this.hasMany("Site", "userId");
+		},
+		
 		defaults: {
 			isActive: true,
 			signupFlowCompleted: false

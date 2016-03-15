@@ -72,7 +72,7 @@ Promise.try(() => {
 		firebaseConfiguration: config.firebase,
 		firebase: firebase,
 		firebaseAuthenticationPromise: firebaseAuthenticationPromise,
-		hostedDomain: hostedDomain
+		hostedDomain: config.hostedDomain
 	}
 	
 	firebase.onAuth(function(authData) {
@@ -88,6 +88,9 @@ Promise.try(() => {
 
 	/* Model configuration */
 	rfr("models/user")(state);
+	rfr("models/plan")(state);
+	rfr("models/preset")(state);
+	rfr("models/site")(state);
 
 	if (environment === "development") {
 		/* Allow cross-domain requests from the CMS development server, and allow access to cookies (and thus the session). */
@@ -122,6 +125,9 @@ Promise.try(() => {
 	app.use(rfr("routes/authentication")(state));
 	app.use("/admin/users", acl.allow("admin"), rfr("routes/admin/users")(state));
 	app.use("/admin/roles", acl.allow("admin"), rfr("routes/admin/roles")(state));
+	app.use("/admin/plans", acl.allow("admin"), rfr("routes/admin/plans")(state));
+	app.use("/admin/presets", acl.allow("admin"), rfr("routes/admin/presets")(state));
+	app.use("/admin/sites", acl.allow("admin"), rfr("routes/admin/sites")(state));
 
 	if (environment === "development") {
 		app.use(rfr("routes/development"));
