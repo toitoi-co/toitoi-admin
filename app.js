@@ -71,7 +71,8 @@ Promise.try(() => {
 		acl: acl,
 		firebaseConfiguration: config.firebase,
 		firebase: firebase,
-		firebaseAuthenticationPromise: firebaseAuthenticationPromise
+		firebaseAuthenticationPromise: firebaseAuthenticationPromise,
+		hostedDomain: hostedDomain
 	}
 	
 	firebase.onAuth(function(authData) {
