@@ -144,9 +144,10 @@ The response will be an object with a single property, `signedRequest`, which co
 
 Possible route-specific responses:
 
-* __403__: User is not allowed to select this preset. Message is one of the following; if not, this is an ACL issue instead.
+* __403__: User is not allowed to select this preset for the given hostname. Message is one of the following; if not, this is an ACL issue instead.
 	* "This preset is not allowed for the current plan."
 	* "This preset has been disabled."
+	* "You are not allowed to change the preset for that hostname."
 
 ## Presets
 
