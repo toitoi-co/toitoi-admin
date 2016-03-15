@@ -54,7 +54,7 @@ exports.up = function (knex, Promise) {
 				table.integer('userId').notNullable().references('id').inTable('users');
 				table.text('siteName').notNullable();
 				table.text('subdomainName').notNullable();
-				table.text('domainName').notNullable();
+				table.text('domainName').nullable();
 			})
 			/*knex.schema.createTable('package_themes', function(table) {
 				table.integer('packageId').references('id').inTable('packages');
