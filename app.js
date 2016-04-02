@@ -95,7 +95,7 @@ Promise.try(() => {
 	if (environment === "development") {
 		/* Allow cross-domain requests from the CMS development server, and allow access to cookies (and thus the session). */
 		app.use(cors({
-			origin: 'http://localhost:4000',
+			origin: config.corsOrigin,
 			credentials: true
 		}));
 	}
