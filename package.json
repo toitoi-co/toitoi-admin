@@ -26,6 +26,7 @@
     "connect-session-knex": "^1.0.20",
     "cors": "^2.7.1",
     "create-error": "^0.3.1",
+    "do-wrapper": "^3.5.0",
     "express": "^4.13.4",
     "express-promise-router": "0.0.9",
     "express-session": "^1.13.0",

@@ -11,7 +11,7 @@ const encodeKey = rfr("lib/firebase/encode-key");
 const checkAllowedAttributes = rfr("lib/model/check-allowed-attributes");
 const saveValidationHook = rfr("lib/model/save-validation-hook");
 
-module.exports = function({bookshelf, firebase, firebaseAuthenticationPromise, hostedDomain}) {
+module.exports = function({bookshelf, firebase, firebaseAuthenticationPromise, hostedDomain, digitalOcean, deploymentIp}) {
 	bookshelf.model("Site", {
 		tableName: "sites",
 		hasTimestamps: ["createdAt", "updatedAt"],
@@ -42,6 +42,7 @@ module.exports = function({bookshelf, firebase, firebaseAuthenticationPromise, h
 			this.on("saving", saveValidationHook);
 			
 			this.on("creating", function(model, attributes) {
+				// FIXME: subdomainName should be a UNIQUE field in the database
 				model.set({bucketKey: uuid.v4()});
 			});
 			
@@ -53,6 +54,8 @@ module.exports = function({bookshelf, firebase, firebaseAuthenticationPromise, h
 					return firebaseAuthenticationPromise;
 				}).then(() => {
 					return this.createFirebaseItem();
+				}).then(() => {
+					return this.createDnsEntry();
 				});
 			});
 			
@@ -77,6 +80,16 @@ module.exports = function({bookshelf, firebase, firebaseAuthenticationPromise, h
 						key: this.get("bucketKey"),
 						owners: ownersObject
 					});
+			});
+		},
+
+		createDnsEntry: function(ip) {
+			return Promise.try(() => {
+				return digitalOcean.domainRecordsCreateAsync(hostedDomain, {
+					name: this.get("subdomainName"),
+					type: "A",
+					data: deploymentIp
+				});
 			});
 		}
 	})

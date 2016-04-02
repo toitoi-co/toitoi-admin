@@ -14,7 +14,11 @@
 		"secret": "<session cookie secret goes here>",
 		"cookieExpiry": 86400
 	},
+	"digitalOcean": {
+		"secret": "<DO API key goes here>"
+	},
 	"hostedDomain": "example.com",
+	"deploymentIp": "1.2.3.4",
 	"corsOrigin": "http://example.com",
 	"listen": {
 		"host": "0.0.0.0",

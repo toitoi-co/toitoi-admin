@@ -8,7 +8,10 @@ const KnexSessionStore = require("connect-session-knex")(expressSession);
 const Firebase = require("firebase");
 const FirebaseTokenGenerator = require("firebase-token-generator");
 const rfr = require("rfr");
-const cors = require('cors');
+const cors = require("cors");
+const doWrapper = require("do-wrapper");
+
+Promise.promisifyAll(doWrapper.prototype);
 
 const sessionHandler = rfr("middleware/session-handler")
 const errorHandler = rfr("middleware/error-handler");
@@ -39,6 +42,8 @@ let bookshelf = require("bookshelf")(knex);
 
 bookshelf.plugin("registry");
 bookshelf.plugin("visibility");
+
+let digitalOcean = new doWrapper(config.digitalOcean.secret);
 
 /* Firebase admin setup */
 let tokenGenerator = new FirebaseTokenGenerator(config.firebase.secret)
@@ -72,7 +77,9 @@ Promise.try(() => {
 		firebaseConfiguration: config.firebase,
 		firebase: firebase,
 		firebaseAuthenticationPromise: firebaseAuthenticationPromise,
-		hostedDomain: config.hostedDomain
+		hostedDomain: config.hostedDomain,
+		deploymentIp: config.deploymentIp,
+		digitalOcean: digitalOcean
 	}
 	
 	firebase.onAuth(function(authData) {
