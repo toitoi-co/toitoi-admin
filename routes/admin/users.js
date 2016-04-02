@@ -12,7 +12,12 @@ module.exports = function({bookshelf}) {
 	
 	router.__param("userId", function(req, res, next, userId) {
 		return Promise.try(() => {
-			return bookshelf.model("User").forge({id: userId}).fetch({require: true});
+			return bookshelf.model("User").forge({
+				id: userId
+			}).fetch({
+				require: true,
+				withRelated: ["site"]
+			});
 		}).then((user) => {
 			req.paramsUser = user;
 			next();
@@ -24,7 +29,9 @@ module.exports = function({bookshelf}) {
 	router.apiRoute("/", {
 		get: function(req, res) {
 			return Promise.try(() => {
-				return bookshelf.model("User").fetchAll();
+				return bookshelf.model("User").fetchAll({
+					withRelated: ["site"]
+				});
 			}).then((users) => {
 				res.json(users.toJSON());
 			});

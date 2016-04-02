@@ -20,6 +20,11 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 		hasTimestamps: ["createdAt", "updatedAt"],
 		hidden: ["hash"],
 		
+		// MVP: Assuming a single site for now.
+		site: function() {
+			return this.hasOne("Site", "userId")
+		},
+
 		sites: function() {
 			return this.hasMany("Site", "userId");
 		},

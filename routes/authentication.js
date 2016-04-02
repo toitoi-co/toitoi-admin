@@ -21,7 +21,12 @@ module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 					password: ["required"]
 				}).run(req.body); 
 			}).then(() => {
-				return bookshelf.model("User").forge({email: req.body.email}).fetch({require: true});
+				return bookshelf.model("User").forge({
+					email: req.body.email
+				}).fetch({
+					require: true,
+					withRelated: ["site"]
+				});
 			}).then((user) => {
 				return Promise.try(() => {
 					return scrypt.verifyHash(req.body.password, user.get("hash"));

@@ -30,6 +30,7 @@ There's currently a fairly direct mapping between the request format for many AP
 * __firstName__, __lastName__, __address1__, __address2__, __city__, __state__, __postalCode__, __country__
 * __createdAt__: Timestamp, when the user account was registered.
 * __updatedAt__: Timestamp, when the properties of the user were last changed.
+* __site__: The first (and currently only) site for the user. A Site object if the user already has a site, or an empty object if they don't.
 
 ## Preset
 
