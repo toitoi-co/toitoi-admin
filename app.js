@@ -139,5 +139,5 @@ Promise.try(() => {
 	/* Error handling */
 	app.use(errorHandler);
 
-	app.listen(3000);
+	app.listen(config.listen.port, config.listen.host);
 })

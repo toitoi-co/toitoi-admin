@@ -14,5 +14,9 @@
 		"secret": "<session cookie secret goes here>",
 		"cookieExpiry": 86400
 	},
-	"hostedDomain": "example.com"
+	"hostedDomain": "example.com",
+	"listen": {
+		"host": "0.0.0.0",
+		"port": 3000
+	}
 }
