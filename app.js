@@ -92,13 +92,10 @@ Promise.try(() => {
 	rfr("models/preset")(state);
 	rfr("models/site")(state);
 
-	if (environment === "development") {
-		/* Allow cross-domain requests from the CMS development server, and allow access to cookies (and thus the session). */
-		app.use(cors({
-			origin: config.corsOrigin,
-			credentials: true
-		}));
-	}
+	app.use(cors({
+		origin: config.corsOrigin,
+		credentials: true
+	}));
 
 	/* Session setup */
 	app.use(expressSession({
