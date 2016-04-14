@@ -1,5 +1,6 @@
 {
 	"database": {
+		"hostname": "localhost",
 		"database": "foo",
 		"username": "bar",
 		"password": "baz"
