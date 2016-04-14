@@ -47,6 +47,21 @@ module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 		}
 	});
 
+	router.apiRoute("/profile", {
+		get: function(req, res, next) {
+			return Promise.try(() => {
+				return bookshelf.model("User").forge({
+					id: req.session.userId
+				}).fetch({
+					require: true,
+					withRelated: ["site"]
+				});
+			}).then((user) => {
+				res.json(user.toJSON());
+			});
+		}
+	});
+
 	router.apiRoute("/generate-token", {
 		post: [acl.allow("member"), function(req, res, next) {
 			let token = req.currentUser.getFirebaseToken({

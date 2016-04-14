@@ -223,6 +223,12 @@
 			</div>
 			
 			<div>
+				Profile:
+				<button data-tab="profile-get">Get</button>
+				<button data-tab="profile-set">Modify</button>
+			</div>
+
+			<div>
 				Presets:
 				<button data-tab="presets">List</button>
 			</div>
@@ -326,6 +332,20 @@
 			</form>
 		</section>
 		
+		<section class="tab-profile-get">
+			<h1>Get current user</h1>
+			<form action="/profile" method="get">
+				<button type="submit">Send</button>
+			</form>
+		</section>
+
+		<section class="tab-profile-set">
+			<h1>Modify current user</h1>
+			<form action="/profile" method="put">
+				<button type="submit">Send</button>
+			</form>
+		</section>
+
 		<section class="tab-token">
 			<h1>Generate Firebase token</h1>
 			<form action="/generate-token" method="post">
