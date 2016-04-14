@@ -34,6 +34,7 @@
     "firebase-token-generator": "^2.0.0",
     "jsonwebtoken-promisified": "^1.0.2",
     "knex": "^0.9.0",
+    "pg": "^4.5.3",
     "rfr": "^1.2.3",
     "scrypt-for-humans": "^2.0.2",
     "uuid": "^2.0.1"

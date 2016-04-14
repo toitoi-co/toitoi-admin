@@ -37,7 +37,7 @@ acl.addRole("admin", {parent: "member"});
 /* Database setup */
 let environment = (process.env.NODE_ENV != null) ? process.env.NODE_ENV : "development";
 let knexfile = rfr("knexfile");
-let knex = require("knex")(knexfile[environment])
+let knex = require("knex")(knexfile)
 let bookshelf = require("bookshelf")(knex);
 
 bookshelf.plugin("registry");
