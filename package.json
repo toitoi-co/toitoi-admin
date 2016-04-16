@@ -41,6 +41,7 @@
     "nunjucks": "^2.4.2",
     "pg": "^4.5.3",
     "rfr": "^1.2.3",
+    "riot-query": "0.0.1",
     "scrypt-for-humans": "^2.0.2",
     "uuid": "^2.0.2"
   },
