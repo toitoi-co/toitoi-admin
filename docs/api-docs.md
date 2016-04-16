@@ -147,6 +147,10 @@ Modifies the User object for the current user. Allowed changes:
 * __lastName__
 * __address1__, __address2__, __city__, __state__, __postalCode__, __country__: *Optional.* Further user information.
 
+Possible route-specific responses:
+
+* __204__: Profile update successful.
+
 ### POST /generate-token
 
 Only accessible to those with `member` role or above.
