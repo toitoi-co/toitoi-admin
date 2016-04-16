@@ -10,3 +10,5 @@ test.sqlite-journal
 config.json
 npm-debug.log
 /notes/
+/development/index_old.html
+/development/bundle.js

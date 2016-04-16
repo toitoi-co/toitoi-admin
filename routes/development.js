@@ -11,4 +11,10 @@ router.apiRoute("/", {
 	}
 })
 
+router.apiRoute("/bundle.js", {
+	get: function(req, res) {
+		res.sendFile(path.join(__dirname, "../development/bundle.js"));
+	}
+});
+
 module.exports = router;
