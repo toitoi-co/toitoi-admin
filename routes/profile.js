@@ -41,22 +41,7 @@ module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 				}).then(() => {
 					res.status(204).end();
 				});
-			})
-
-
-			return Promise.try(() => {
-
-			}).then(() => {
-				return scrypt.hash(req.body.password);
-			}).then((hash) => {
-				return bookshelf.model("User")
-					.forge(userAttributes)
-					.save();
-			}).then((user) => {
-				res.json(user.toJSON());
-			}).catch(checkit.Error, (err) => {
-				throw new errors.ValidationError("One or more fields were invalid.", {errors: err.errors});
-			})
+			});
 		}]
 	});
 
