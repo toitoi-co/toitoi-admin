@@ -31,11 +31,12 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 		
 		defaults: {
 			isActive: true,
-			signupFlowCompleted: true
+			signupFlowCompleted: true,
+			onboardingFlowCompleted: false
 		},
 		
 		parse: function(attributes) {
-			return parseBooleanFields(attributes, ["isActive", "signupFlowCompleted"]);
+			return parseBooleanFields(attributes, ["isActive", "signupFlowCompleted", "onboardingFlowCompleted"]);
 		},
 		
 		validAttributes: [
@@ -45,6 +46,7 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 			"role",
 			"isActive",
 			"signupFlowCompleted",
+			"onboardingFlowCompleted",
 			"confirmationKey",
 			"firstName",
 			"lastName",
@@ -63,6 +65,7 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 			email: "email",
 			isActive: "boolean",
 			signupFlowCompleted: "boolean",
+			onboardingFlowCompleted: "boolean",
 			role: ["required", (val) => {
 				if (acl.getRoles().indexOf(val) === -1) {
 					throw new errors.ValidationError("The specified role does not exist.")

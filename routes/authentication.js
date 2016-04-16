@@ -75,7 +75,7 @@ module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBas
 						password: [validatePassword]
 					}).run(req.body);
 				}).then(() => {
-					let copyableAttributes = ["email", "firstName", "lastName", "address1", "address2", "city", "state", "postalCode", "country"];
+					let copyableAttributes = ["email", "firstName", "lastName", "address1", "address2", "city", "state", "postalCode", "country", "onboardingFlowCompleted"];
 					let newAttributes = copy.immutable({}, req.body, copyableAttributes);
 
 					return user.save(newAttributes, {patch: true});
