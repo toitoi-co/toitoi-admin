@@ -12,6 +12,7 @@ object-lookup
 		const Promise = require("bluebird");
 		const errors = require("../lib/util/errors");
 		const rejectErrors = require("../lib/http/reject-errors");
+		const forward = require("../lib/events/forward");
 		
 		Object.assign(this, {
 			object: null
@@ -35,11 +36,6 @@ object-lookup
 				});
 			});
 			
-			form.on("error", (err) => {
-				this.trigger("error", err);
-			});
-			
-			editor.on("response", (response) => {
-				this.trigger("response", response);
-			});
+			forward(form, this, "error");
+			forward(editor, this, ["error", "response"]);
 		})

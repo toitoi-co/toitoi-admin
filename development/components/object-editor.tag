@@ -7,6 +7,7 @@ object-editor
 
 	script.
 		const type = require("type-of-is");
+		const forward = require("../lib/events/forward");
 		
 		Object.assign(this, {
 			isPrimitive: function(value) {
@@ -16,7 +17,6 @@ object-editor
 		})
 		
 		this.on("mount", () => {
-			this.tags["json-form"].on("response", (response) => {
-				this.trigger("response", response);
-			});
-		})
+			let form = this.tags["json-form"];
+			forward(form, this, ["error", "response"]);
+		});
