@@ -60,51 +60,56 @@ var livereloadLogger = namedLog("livereload", {
 
 patchLivereloadLogger(livereload, livereloadLogger);
 
-gulp.task('webpack', ["livereload"], function(){
-	return gulp.src("./development/index.js")
-		//.pipe(plumber())
-		.pipe(webpackStream({
-			watch: true,
-			module: {
-				preLoaders: [{
-					test: /\.tag$/,
-					loader: "riotjs-loader",
-					exclude: /node_modules/,
-					query: {
-						type: "babel",
-						template: "jade",
-						parserOptions: {
-							presets: ["es2015-riot"]
+function webpackTask(options) {
+	return function(){
+		return gulp.src("./development/index.js")
+			//.pipe(plumber())
+			.pipe(webpackStream({
+				watch: options.watch,
+				module: {
+					preLoaders: [{
+						test: /\.tag$/,
+						loader: "riotjs-loader",
+						exclude: /node_modules/,
+						query: {
+							type: "babel",
+							template: "jade",
+							parserOptions: {
+								presets: ["es2015-riot"]
+							}
 						}
-					}
-				}],
-				loaders: [{
-					test: /\.js/,
-					loader: "babel-loader",
-					query: {
-						presets: ["es2015"]
-					}
-				}, {
-					test: /\.json$/,
-					loader: "json-loader"
-				}]
-			},
-			plugins: [ new webpack.ProvidePlugin({riot: "riot"}) ],
-			resolve: {
-				extensions: [
-					"",
-					".tag",
-					".web.js", ".js",
-					".web.json", ".json"
-				]
-			},
-			debug: true
-		}))
-		.pipe(rename("bundle.js"))
-		.pipe(namedLog("webpack").stream())
-		.pipe(livereload())
-		.pipe(gulp.dest("./development/"));
-});
+					}],
+					loaders: [{
+						test: /\.js/,
+						loader: "babel-loader",
+						query: {
+							presets: ["es2015"]
+						}
+					}, {
+						test: /\.json$/,
+						loader: "json-loader"
+					}]
+				},
+				plugins: [ new webpack.ProvidePlugin({riot: "riot"}) ],
+				resolve: {
+					extensions: [
+						"",
+						".tag",
+						".web.js", ".js",
+						".web.json", ".json"
+					]
+				},
+				debug: true
+			}))
+			.pipe(rename("bundle.js"))
+			.pipe(namedLog("webpack").stream())
+			.pipe(livereload())
+			.pipe(gulp.dest("./development/"));
+	}
+}
+
+gulp.task('webpack-watch', ["livereload"], webpackTask({watch: true}));
+gulp.task('webpack', webpackTask({watch: false}));
 
 gulp.task("livereload", function() {
 	livereload.listen({
@@ -131,4 +136,6 @@ gulp.task("nodemon", function() {
 	});
 });
 
-gulp.task('default', ['webpack', "nodemon"]);
+gulp.task("watch", ["webpack-watch", "nodemon"])
+gulp.task("build", ["webpack"]);
+gulp.task('default', ["watch"]);
