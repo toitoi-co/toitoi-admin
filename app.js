@@ -1,6 +1,7 @@
 'use strict';
 
 const Promise = require("bluebird");
+const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const expressSession = require("express-session");
@@ -16,6 +17,7 @@ Promise.promisifyAll(doWrapper.prototype);
 const sessionHandler = rfr("middleware/session-handler")
 const errorHandler = rfr("middleware/error-handler");
 const aclModule = rfr("lib/acl");
+const mailer = rfr("lib/email/mailer");
 
 let config = require("./config.json")
 
@@ -34,6 +36,14 @@ let acl = aclModule(function(req, res) {
 acl.addRole("unconfirmed", {parent: "guest"});
 acl.addRole("member", {parent: "unconfirmed"});
 acl.addRole("admin", {parent: "member"});
+
+/* E-mail setup */
+let mailerInstance = mailer({
+	domain: config.mailgun.domain,
+	apiKey: config.mailgun.apiKey,
+	sender: config.mailgun.sender,
+	templatePath: path.join(__dirname, "templates")
+});
 
 /* Database setup */
 let environment = (process.env.NODE_ENV != null) ? process.env.NODE_ENV : "development";
@@ -80,7 +90,8 @@ Promise.try(() => {
 		firebaseAuthenticationPromise: firebaseAuthenticationPromise,
 		hostedDomain: config.hostedDomain,
 		deploymentIp: config.deploymentIp,
-		digitalOcean: digitalOcean
+		digitalOcean: digitalOcean,
+		mailer: mailerInstance
 	}
 	
 	firebase.onAuth(function(authData) {

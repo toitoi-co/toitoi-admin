@@ -18,6 +18,11 @@
 	"digitalOcean": {
 		"secret": "<DO API key goes here>"
 	},
+	"mailgun": {
+		"domain": "",
+		"apiKey": "",
+		"sender": ""
+	},
 	"hostedDomain": "example.com",
 	"deploymentIp": "1.2.3.4",
 	"corsOrigin": "http://example.com",
