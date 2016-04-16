@@ -137,7 +137,7 @@ Only accessible to those with `unconfirmed` role or above.
 
 Return a User object for the current user.
 
-### POST /profile
+### PUT /profile
 
 Only accessible to those with `member` role or above.
 
