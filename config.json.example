@@ -26,6 +26,7 @@
 	"hostedDomain": "example.com",
 	"deploymentIp": "1.2.3.4",
 	"cmsBase": "http://cms.example.com",
+	"siteLaunched": false,
 	"corsOrigin": "http://example.com",
 	"listen": {
 		"host": "0.0.0.0",
