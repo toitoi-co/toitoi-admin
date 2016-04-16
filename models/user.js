@@ -18,7 +18,7 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 	bookshelf.model("User", {
 		tableName: "users",
 		hasTimestamps: ["createdAt", "updatedAt"],
-		hidden: ["hash"],
+		hidden: ["hash", "confirmationKey"],
 		
 		// MVP: Assuming a single site for now.
 		site: function() {
