@@ -49,7 +49,7 @@ module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBas
 	});
 
 	router.apiRoute("/profile", {
-		get: [acl.allow("member"), function(req, res, next) {
+		get: [acl.allow("unconfirmed"), function(req, res, next) {
 			return Promise.try(() => {
 				return bookshelf.model("User").forge({
 					id: req.session.userId
@@ -71,11 +71,10 @@ module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBas
 			}).then((user) => {
 				return Promise.try(() => {
 					return checkit({
-						email: ["email"],
 						password: [validatePassword]
 					}).run(req.body);
 				}).then(() => {
-					let copyableAttributes = ["email", "firstName", "lastName", "address1", "address2", "city", "state", "postalCode", "country", "onboardingFlowCompleted"];
+					let copyableAttributes = ["firstName", "lastName", "address1", "address2", "city", "state", "postalCode", "country", "onboardingFlowCompleted"];
 					let newAttributes = copy.immutable({}, req.body, copyableAttributes);
 
 					return user.save(newAttributes, {patch: true});
@@ -208,7 +207,7 @@ module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBas
 	});
 
 	router.apiRoute("/logout", {
-		post: [acl.allow("member"), function(req, res, next) {
+		post: [acl.allow("unconfirmed"), function(req, res, next) {
 			res.header("X-API-Authenticated", "false");
 			req.session.destroy();
 			res.status(204).end();
