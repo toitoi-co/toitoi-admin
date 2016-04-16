@@ -59,6 +59,44 @@ module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 			}).then((user) => {
 				res.json(user.toJSON());
 			});
+		}],
+		put: [acl.allow("member"), function(req, res, next) {
+			return Promise.try(() => {
+				return bookshelf.model("User").forge({
+					id: req.session.userId
+				}).fetch({
+					require: true
+				});
+			}).then((user) => {
+				return Promise.try(() => {
+					return checkit({
+						email: ["email"],
+						password: [validatePassword]
+					}).run(req.body);
+				}).then(() => {
+					let copyableAttributes = ["email", "firstName", "lastName", "address1", "address2", "city", "state", "postalCode", "country"];
+					let newAttributes = copy.immutable({}, req.body, copyableAttributes);
+
+					return user.save(newAttributes, {patch: true});
+				}).then(() => {
+					res.status(204).end();
+				});
+			})
+
+
+			return Promise.try(() => {
+
+			}).then(() => {
+				return scrypt.hash(req.body.password);
+			}).then((hash) => {
+				return bookshelf.model("User")
+					.forge(userAttributes)
+					.save();
+			}).then((user) => {
+				res.json(user.toJSON());
+			}).catch(checkit.Error, (err) => {
+				throw new errors.ValidationError("One or more fields were invalid.", {errors: err.errors});
+			})
 		}]
 	});
 

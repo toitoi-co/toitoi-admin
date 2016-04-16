@@ -60,6 +60,7 @@ app
 		json-form(route="/profile", method="GET")
 	
 	tab(tabName="profile-set", title="Modify current user")
+		// FIXME: Only display fields that the user is allowed to change
 		object-editor(show="{profile != null}", object="{profile}", route="/profile")
 		
 	tab(tabName="signed-request-preset", title="Signed request: Switch preset")
@@ -187,7 +188,7 @@ app
 				this.update();
 			});
 			
-			riotQuery(this, "**/tab/{json-form,object-lookup}").forEach((formTag) => {
+			riotQuery(this, "**/tab/{json-form,object-lookup,object-editor}").forEach((formTag) => {
 				formTag.on("pending", () => {
 					responseViewer.pending();
 				});
