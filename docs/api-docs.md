@@ -27,6 +27,7 @@ There's currently a fairly direct mapping between the request format for many AP
 * __role__: String, referencing the role name in the ACL. Can be any of the roles returned by the `GET /roles` route, except for `guest`.
 * __isActive__: Boolean.
 * __signupFlowCompleted:__ Boolean, whether the user has gone through the sign-up flow, including e-mail validation, setting a password, and so on.
+* __onboardingFlowCompleted:__ Boolean, whether the user has gone through the onboarding flow (ie. section `1.0` in the [interface specification](https://github.com/toitoi-co/toitoi-cms/blob/master/interface_spec.md)).
 * __firstName__, __lastName__, __address1__, __address2__, __city__, __state__, __postalCode__, __country__
 * __createdAt__: Timestamp, when the user account was registered.
 * __updatedAt__: Timestamp, when the properties of the user were last changed.
