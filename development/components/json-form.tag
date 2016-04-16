@@ -9,13 +9,16 @@ json-form
 		const parseRoute = require("../lib/route/parse");
 		const parseParams = require("../lib/route/params");
 		const defaultValue = require("../lib/util/default-value");
+		const parsedValueSerializer = require("../lib/form/serializer");
 		
 		Object.assign(this, {
 			_handleSubmit: function(event) {
 				Promise.try(() => {
 					let form = this.root.querySelector("form");
 					
-					let serialized = serialize(form, {hash: true});
+					let serialized = serialize(form, {
+						serializer: parsedValueSerializer
+					});
 					
 					this.trigger("pending");
 					
