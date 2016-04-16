@@ -31,7 +31,7 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 		
 		defaults: {
 			isActive: true,
-			signupFlowCompleted: false
+			signupFlowCompleted: true
 		},
 		
 		parse: function(attributes) {
