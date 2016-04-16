@@ -80,6 +80,16 @@ Creates a new user account. The following fields are accepted:
 * __password__: Must be between 8 and 1024 characters, and contain at least one number or special character. This field will likely be removed in the future, in favour of setting a password after e-mail confirmation.
 * __address1__, __address2__, __city__, __state__, __postalCode__, __country__: *Optional.* Further user information.
 
+### POST /confirm/:confirmationKey
+
+Attempts to confirm an e-mail address for the given `confirmationKey` parameter.
+
+Possible route-specific responses:
+
+* __204__: Confirmation successful.
+* __404__: Invalid confirmation key. Message is:
+	* "No such confirmation key exists."
+
 ### POST /login
 
 Attempts to authenticate as a given user. Expects the following:

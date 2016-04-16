@@ -21,13 +21,13 @@ json-form
 					
 					let method = defaultValue(opts.method, "GET");
 					let route = parseRoute(opts.route);
-					let params = Object.assign(parseParams(opts), opts.extraparams);
+					let params = Object.assign(parseParams(opts), opts.extraParams);
 					let body;
 					
-					if (["POST", "PUT", "PATCH"].indexOf(method) !== -1) {
-						body = JSON.stringify(serialized);
-					} else if (opts.useformparams) {
+					if (opts.useFormParams) {
 						Object.assign(params, serialized);
+					} else if (["POST", "PUT", "PATCH"].indexOf(method) !== -1) {
+						body = JSON.stringify(serialized);
 					}
 					
 					let url = route(params);

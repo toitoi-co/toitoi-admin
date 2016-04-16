@@ -45,6 +45,7 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 			"role",
 			"isActive",
 			"signupFlowCompleted",
+			"confirmationKey",
 			"firstName",
 			"lastName",
 			"address1",

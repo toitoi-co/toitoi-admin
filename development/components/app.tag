@@ -46,6 +46,12 @@ app
 			div.field
 				label New password:
 				input(type="password", name="password")
+	
+	tab(tabName="confirm-email", title="Confirm e-mail address")
+		json-form(route="/confirm/:confirmationKey", method="POST", use-form-params="true")
+			div.field
+				label Confirmation key:
+				input(type="text", name="confirmationKey")
 			
 	tab(tabName="token", title="Generate Firebase token")
 		json-form(route="/generate-token", method="POST")

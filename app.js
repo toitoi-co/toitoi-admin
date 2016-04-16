@@ -90,6 +90,8 @@ Promise.try(() => {
 		firebaseAuthenticationPromise: firebaseAuthenticationPromise,
 		hostedDomain: config.hostedDomain,
 		deploymentIp: config.deploymentIp,
+		cmsBase: config.cmsBase,
+		siteLaunched: config.siteLaunched,
 		digitalOcean: digitalOcean,
 		mailer: mailerInstance
 	}

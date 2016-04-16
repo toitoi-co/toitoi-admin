@@ -1,5 +1,5 @@
 object-lookup
-	json-form(route="{opts.route}", method="GET", param-id="{currentId}", useFormParams="true")
+	json-form(route="{opts.route}", method="GET", param-id="{currentId}", use-form-params="true")
 		.field
 			label ID:
 			input(type="text", name="id")

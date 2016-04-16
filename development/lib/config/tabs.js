@@ -8,6 +8,9 @@ module.exports = [{
 			name: "Register",
 			tabName: "register"
 		}, {
+			name: "Confirm e-mail address",
+			tabName: "confirm-email"
+		}, {
 			name: "Login",
 			tabName: "login"
 		}, {

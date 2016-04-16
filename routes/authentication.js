@@ -3,6 +3,7 @@
 const Promise = require("bluebird");
 const checkit = require("checkit");
 const scrypt = require("scrypt-for-humans");
+const uuid = require("uuid");
 const rfr = require("rfr");
 
 const apiRouter = rfr("lib/api-router");
@@ -10,7 +11,7 @@ const errors = rfr("lib/errors");
 const copy = rfr("lib/copy-properties");
 const validatePassword = rfr("lib/validate-password");
 
-module.exports = function({acl, firebaseConfiguration, bookshelf}) {
+module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBase, siteLaunched}) {
 	let router = apiRouter();
 
 	router.apiRoute("/login", {
@@ -157,12 +158,19 @@ module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 				let userAttributes = copy.immutable({
 					role: "unconfirmed",
 					isActive: false,
+					confirmationKey: uuid.v4(),
 					hash: hash
 				}, req.body, copyableAttributes)
 				
 				return bookshelf.model("User")
 					.forge(userAttributes)
 					.save();
+			}).tap((user) => {
+				// FIXME: Make subject configurable?
+				return mailer.send("confirmation", user.get("email"), "Please confirm your toitoi.co account", {
+					confirmationKey: user.get("confirmationKey"),
+					site: cmsBase
+				});
 			}).then((user) => {
 				res.json(user.toJSON());
 			}).catch(checkit.Error, (err) => {
@@ -171,6 +179,34 @@ module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 		}
 	});
 	
+	router.apiRoute("/confirm/:confirmationKey", {
+		post: function(req, res, next) {
+			return Promise.try(() => {
+				return bookshelf.model("User").forge({
+					role: "unconfirmed",
+					confirmationKey: req.params.confirmationKey
+				}).fetch({
+					require: true
+				});
+			}).then((user) => {
+				return user.save({
+					role: "member"
+				}, {
+					patch: true
+				});
+			}).tap((user) => {
+				let welcomeTemplate = (siteLaunched) ? "postlaunch-welcome" : "prelaunch-welcome";
+
+				// FIXME: Make subject configurable?
+				return mailer.send(welcomeTemplate, user.get("email"), "Welcome to toitoi.co!");
+			}).then((user) => {
+				res.status(204).end();
+			}).catch(bookshelf.NotFoundError, (err) => {
+				throw new errors.NotFoundError("No such confirmation key exists.");
+			});
+		}
+	});
+
 	router.apiRoute("/logout", {
 		post: [acl.allow("member"), function(req, res, next) {
 			res.header("X-API-Authenticated", "false");
