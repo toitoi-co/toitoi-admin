@@ -31,7 +31,8 @@ let acl = aclModule(function(req, res) {
 	}
 });
 
-acl.addRole("member", {parent: "guest"});
+acl.addRole("unconfirmed", {parent: "guest"});
+acl.addRole("member", {parent: "unconfirmed"});
 acl.addRole("admin", {parent: "member"});
 
 /* Database setup */

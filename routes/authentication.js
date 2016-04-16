@@ -155,7 +155,7 @@ module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 				let copyableAttributes = ["email", "firstName", "lastName", "address1", "address2", "city", "state", "postalCode", "country"];
 				
 				let userAttributes = copy.immutable({
-					role: "member",
+					role: "unconfirmed",
 					isActive: false,
 					hash: hash
 				}, req.body, copyableAttributes)
