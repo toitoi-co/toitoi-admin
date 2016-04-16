@@ -34,10 +34,6 @@ module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 				});
 			}).then((user) => {
 				return Promise.try(() => {
-					return checkit({
-						password: [validatePassword]
-					}).run(req.body);
-				}).then(() => {
 					let copyableAttributes = ["firstName", "lastName", "address1", "address2", "city", "state", "postalCode", "country", "onboardingFlowCompleted"];
 					let newAttributes = copy.immutable({}, req.body, copyableAttributes);
 
