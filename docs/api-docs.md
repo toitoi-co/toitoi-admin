@@ -107,7 +107,7 @@ Possible route-specific responses:
 
 ### POST /logout
 
-Only accessible to those with `member` role or above.
+Only accessible to those with `unconfirmed` role or above.
 
 Logs the user out. This route may expect a CSRF prevention token in the future.
 
@@ -130,6 +130,22 @@ Possible route-specific responses:
 * __401__: Invalid `oldPassword`. Message is one of:
 	* "No previous password specified, but user is not a new user."
 	* "Invalid previous password specified."
+	
+### GET /profile
+
+Only accessible to those with `unconfirmed` role or above.
+
+Return a User object for the current user.
+
+### POST /profile
+
+Only accessible to those with `member` role or above.
+
+Modifies the User object for the current user. Allowed changes:
+
+* __firstName__
+* __lastName__
+* __address1__, __address2__, __city__, __state__, __postalCode__, __country__: *Optional.* Further user information.
 
 ### POST /generate-token
 
