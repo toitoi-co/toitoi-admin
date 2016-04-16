@@ -48,7 +48,7 @@ module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 	});
 
 	router.apiRoute("/profile", {
-		get: function(req, res, next) {
+		get: [acl.allow("member"), function(req, res, next) {
 			return Promise.try(() => {
 				return bookshelf.model("User").forge({
 					id: req.session.userId
@@ -59,7 +59,7 @@ module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 			}).then((user) => {
 				res.json(user.toJSON());
 			});
-		}
+		}]
 	});
 
 	router.apiRoute("/generate-token", {
