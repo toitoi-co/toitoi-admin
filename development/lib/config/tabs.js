@@ -33,6 +33,15 @@ module.exports = [{
 			tabName: "profile-set"
 		}]
 	}, {
+		name: "Site",
+		items: [{
+			name: "Get",
+			tabName: "site-get"
+		}, {
+			name: "Modify / Create",
+			tabName: "site-set"
+		}]
+	}, {
 		name: "Presets",
 		items: [{
 			name: "List",

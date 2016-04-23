@@ -60,6 +60,13 @@ module.exports = {
 		name: "domainName",
 		description: "Custom domain"
 	}],
+	userSite: [{
+		name: "siteName",
+		description: "Site name (title)"
+	}, {
+		name: "subdomainName",
+		description: "Subdomain (without domain)"
+	}],
 	presets: [{
 		name: "planId",
 		description: "Plan ID"

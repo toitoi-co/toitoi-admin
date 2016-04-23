@@ -150,6 +150,35 @@ Modifies the User object for the current user. Allowed changes:
 Possible route-specific responses:
 
 * __204__: Profile update successful.
+	
+### GET /site
+
+Only accessible to those with `member` role or above.
+
+Returns the Site for the current user.
+
+Possible route-specific responses:
+
+* __404__: The currently logged in user does not have a Site yet.
+
+### PUT /site
+
+Only accessible to those with `member` role or above.
+
+Either creates a new site if the user does not have one yet, or modifies the existing one.
+
+Allowed fields for initial creation:
+
+* __siteName__: The name (title) for the site.
+* __subdomainName__: The subdomain for the site, *without* the `.toitoi.co` suffix.
+
+Allowed fields for modification of an existing site:
+
+* __siteName__: The name (title) for the site.
+
+Possible route-specific responses:
+
+* __204__: Site update successful.
 
 ### POST /generate-token
 
