@@ -76,8 +76,8 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 			this.on("saving", saveValidationHook);
 			
 			this.on("created", function() {
-				/* FIXME: Should do insert on Firebase first, but this is not possible because
-				 *        Firebase does not offer any kind of exclusive write function.
+				/* TODO: Should do insert on Firebase first, but this is not possible because
+				 *       Firebase does not offer any kind of exclusive write function.
 				 */
 				return Promise.try(() => {
 					return firebaseAuthenticationPromise;
@@ -88,7 +88,7 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 				});
 			});
 			
-			/* FIXME: Should implement a 'destroyed' event as well, but need to investigate
+			/* TODO: Should implement a 'destroyed' event as well, but need to investigate
 			 * how to integrate this with actual site removal and such, and whether making
 			 * this happen upon removing the User model is really the right way to go.
 			 */
@@ -111,7 +111,7 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 				
 				if (sites.length > 0) {
 					return sites.at(0);
-				} // FIXME: Throw an Error if the user has no sites?
+				} // TODO: Throw an Error if the user has no sites?
 			})
 		},
 		getPlan: function() {

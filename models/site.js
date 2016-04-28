@@ -47,8 +47,8 @@ module.exports = function({bookshelf, firebase, firebaseAuthenticationPromise, h
 			});
 			
 			this.on("created", function() {
-				/* FIXME: Should do insert on Firebase first, but this is not possible because
-				 *        Firebase does not offer any kind of exclusive write function.
+				/* TODO: Should do insert on Firebase first, but this is not possible because
+				 *       Firebase does not offer any kind of exclusive write function.
 				 */
 				return Promise.try(() => {
 					return firebaseAuthenticationPromise;

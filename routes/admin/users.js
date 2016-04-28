@@ -23,7 +23,7 @@ module.exports = function({bookshelf}) {
 			next();
 		}).catch(bookshelf.Model.NotFoundError, (err) => {
 			throw new errors.NotFoundError("No such user exists.");
-		}).catch(next); // FIXME: File a bug on express-promise-router about line #44, which incorrectly assumes that the last parameter is `next`
+		}).catch(next); // FIXME: Await patch from express-promise-router for broken .param handling
 	})
 
 	router.apiRoute("/", {
