@@ -11,10 +11,7 @@ const checkAllowedAttributes = rfr("lib/model/check-allowed-attributes");
 const saveValidationHook = rfr("lib/model/save-validation-hook");
 const parseBooleanFields = rfr("lib/model/parse-boolean-fields");
 
-module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, firebaseAuthenticationPromise}) {
-	// FIXME: Pass in tokenGenerator as state
-	let tokenGenerator = new FirebaseTokenGenerator(firebaseConfiguration.secret);
-	
+module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, firebaseAuthenticationPromise, firebaseTokenGenerator}) {
 	bookshelf.model("User", {
 		tableName: "users",
 		hasTimestamps: ["createdAt", "updatedAt"],
@@ -98,7 +95,7 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 		},
 		
 		getFirebaseToken: function(options) {
-			return tokenGenerator.createToken({
+			return firebaseTokenGenerator.createToken({
 				uid: `local:${this.get("id")}`,
 				email: this.get("email"),
 				provider: "admin-api"

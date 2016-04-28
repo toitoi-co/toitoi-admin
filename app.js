@@ -88,6 +88,7 @@ Promise.try(() => {
 		firebaseConfiguration: config.firebase,
 		firebase: firebase,
 		firebaseAuthenticationPromise: firebaseAuthenticationPromise,
+		firebaseTokenGenerator: tokenGenerator,
 		hostedDomain: config.hostedDomain,
 		deploymentIp: config.deploymentIp,
 		cmsBase: config.cmsBase,
