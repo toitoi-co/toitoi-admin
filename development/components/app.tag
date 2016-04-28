@@ -66,14 +66,14 @@ app
 		json-form(route="/profile", method="GET")
 	
 	tab(tabName="profile-set", title="Modify current user")
-		// FIXME: Only display fields that the user is allowed to change
+		// TODO: Only display fields that the user is allowed to change
 		object-editor(show="{profile != null}", object="{profile}", route="/profile")
 		
 	tab(tabName="site-get", title="Get current site")
 		json-form(route="/site", method="GET")
 	
 	tab(tabName="site-set", title="Modify current site")
-		// FIXME: Only display fields that the user is allowed to change
+		// TODO: Only display fields that the user is allowed to change
 		object-editor(show="{site != null}", object="{site}", route="/site")
 		
 		json-form(show="{site == null}", route="/site", method="PUT")
