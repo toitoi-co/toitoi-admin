@@ -94,7 +94,8 @@ Promise.try(() => {
 		cmsBase: config.cmsBase,
 		siteLaunched: config.siteLaunched,
 		digitalOcean: digitalOcean,
-		mailer: mailerInstance
+		mailer: mailerInstance,
+		emailSubjects: config.emailSubjects
 	}
 	
 	firebase.onAuth(function(authData) {

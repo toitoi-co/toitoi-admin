@@ -11,7 +11,7 @@ const errors = rfr("lib/errors");
 const copy = rfr("lib/copy-properties");
 const validatePassword = rfr("lib/validate-password");
 
-module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBase, siteLaunched}) {
+module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBase, siteLaunched, emailSubjects}) {
 	let router = apiRouter();
 
 	router.apiRoute("/login", {
@@ -74,7 +74,7 @@ module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBas
 					.save();
 			}).tap((user) => {
 				// FIXME: Make subject configurable?
-				return mailer.send("confirmation", user.get("email"), "Please confirm your toitoi.co account", {
+				return mailer.send("confirmation", user.get("email"), emailSubjects.confirmEmail, {
 					confirmationKey: user.get("confirmationKey"),
 					site: cmsBase
 				});
@@ -103,9 +103,10 @@ module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBas
 				});
 			}).tap((user) => {
 				let welcomeTemplate = (siteLaunched) ? "postlaunch-welcome" : "prelaunch-welcome";
+				let welcomeSubject = (siteLaunched) ? emailSubjects.postLaunchWelcome : emailSubjects.preLaunchWelcome;
 
 				// FIXME: Make subject configurable?
-				return mailer.send(welcomeTemplate, user.get("email"), "Welcome to toitoi.co!");
+				return mailer.send(welcomeTemplate, user.get("email"), welcomeSubject);
 			}).then((user) => {
 				res.status(204).end();
 			}).catch(bookshelf.NotFoundError, (err) => {
