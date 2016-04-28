@@ -95,7 +95,8 @@ Promise.try(() => {
 		siteLaunched: config.siteLaunched,
 		digitalOcean: digitalOcean,
 		mailer: mailerInstance,
-		emailSubjects: config.emailSubjects
+		emailSubjects: config.emailSubjects,
+		environment: environment
 	}
 	
 	firebase.onAuth(function(authData) {
@@ -159,7 +160,7 @@ Promise.try(() => {
 	}
 
 	/* Error handling */
-	app.use(errorHandler);
+	app.use(errorHandler(state));
 
 	app.listen(config.listen.port, config.listen.host);
 })
