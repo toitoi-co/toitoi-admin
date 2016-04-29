@@ -74,7 +74,6 @@ module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBas
 					.forge(userAttributes)
 					.save();
 			}).tap((user) => {
-				// FIXME: Make subject configurable?
 				return mailer.send("confirmation", user.get("email"), emailSubjects.confirmEmail, {
 					confirmationKey: user.get("confirmationKey"),
 					site: cmsBase
@@ -106,7 +105,6 @@ module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBas
 				let welcomeTemplate = (siteLaunched) ? "postlaunch-welcome" : "prelaunch-welcome";
 				let welcomeSubject = (siteLaunched) ? emailSubjects.postLaunchWelcome : emailSubjects.preLaunchWelcome;
 
-				// FIXME: Make subject configurable?
 				return mailer.send(welcomeTemplate, user.get("email"), welcomeSubject);
 			}).then((user) => {
 				res.status(204).end();
