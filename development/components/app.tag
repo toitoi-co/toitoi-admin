@@ -106,7 +106,7 @@ app
 				div.field(each="{field in parent.parent.formFields[model]}")
 					hr(if="{field.type === 'divider'}")
 					virtual(if="{field.type !== 'divider'}")
-						// FIXME: parent.parent?
+						// TODO: parent.parent?
 						label {field.description}:
 						input(type="text", name="{field.name}", value="{field.default}")
 			

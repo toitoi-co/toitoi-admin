@@ -23,7 +23,7 @@ module.exports = function({bookshelf}) {
 			next();
 		}).catch(bookshelf.Model.NotFoundError, (err) => {
 			throw new errors.NotFoundError("No such user exists.");
-		}).catch(next); // FIXME: Await patch from express-promise-router for broken .param handling
+		}).catch(next); // TODO: Await patch from express-promise-router for broken .param handling
 	})
 
 	router.apiRoute("/", {
@@ -43,7 +43,7 @@ module.exports = function({bookshelf}) {
 				}
 
 				if (req.body.password == null) {
-					/* FIXME: Surely this can be done nicer? This is already checked in the model... */
+					/* TODO: Surely this can be done nicer? This is already checked in the model... */
 					throw new errors.ValidationError("A password must be specified.");
 				} else {
 					var password = req.body.password;
@@ -99,8 +99,8 @@ module.exports = function({bookshelf}) {
 			}).catch(bookshelf.Model.NoRowsDeletedError, (err) => {
 				/* This should only happen in the case of a race condition, where the user was deleted
 				 * inbetween the execution of the `userId` parameter handler and the `destroy` call.
-				 * FIXME: Investigate possible causes for this error, and whether different types of
-				 *        errors / status codes might be necessary.
+				 * TODO: Investigate possible causes for this error, and whether different types of
+				 *       errors / status codes might be necessary.
 				 */
 				throw new errors.ConflictError("Could not delete the user, it was most likely already deleted.")
 			})

@@ -58,7 +58,7 @@ module.exports = function({bookshelf, firebase, firebaseAuthenticationPromise, h
 				});
 			});
 			
-			/* FIXME: Should implement a 'destroyed' event as well. */
+			/* TODO: Should implement a 'destroyed' event as well. */
 		},
 		
 		createFirebaseItem: function() {

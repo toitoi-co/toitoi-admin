@@ -38,7 +38,6 @@ module.exports = function({bookshelf}) {
 			"updatedAt"
 		],
 		
-		// FIXME: Detect 'UNIQUE constraint failed' errors, and throw accordingly
 		validationRules: checkit({
 			url: "url",
 			isEnabled: "boolean"
