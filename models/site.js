@@ -42,7 +42,6 @@ module.exports = function({bookshelf, firebase, firebaseAuthenticationPromise, h
 			this.on("saving", saveValidationHook);
 			
 			this.on("creating", function(model, attributes) {
-				// FIXME: subdomainName should be a UNIQUE field in the database
 				model.set({bucketKey: uuid.v4()});
 			});
 			
