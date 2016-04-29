@@ -57,7 +57,6 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 			"updatedAt"
 		],
 		
-		// FIXME: Detect 'UNIQUE constraint failed' errors, and throw accordingly
 		validationRules: checkit({
 			email: "email",
 			isActive: "boolean",

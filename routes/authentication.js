@@ -10,6 +10,7 @@ const apiRouter = rfr("lib/api-router");
 const errors = rfr("lib/errors");
 const copy = rfr("lib/copy-properties");
 const validatePassword = rfr("lib/validate-password");
+const detectUniqueViolation = rfr("lib/model/detect-unique-violation");
 
 module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBase, siteLaunched, emailSubjects}) {
 	let router = apiRouter();
@@ -82,7 +83,7 @@ module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBas
 				res.json(user.toJSON());
 			}).catch(checkit.Error, (err) => {
 				throw new errors.ValidationError("One or more fields were invalid.", {errors: err.errors});
-			})
+			}).catch(detectUniqueViolation);
 		}
 	});
 	
