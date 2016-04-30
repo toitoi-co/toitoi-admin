@@ -24,10 +24,15 @@ module.exports = function({bookshelf, firebase, firebaseAuthenticationPromise, h
 			return this.belongsTo("User", "userId");
 		},
 		
+		preset: function() {
+			return this.belongsTo("Preset", "presetId");
+		},
+		
 		validAttributes: [
 			"id",
 			"planId",
 			"userId",
+			"presetId",
 			"siteName",
 			"subdomainName",
 			"domainName",

@@ -41,10 +41,10 @@ module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 						userId: req.session.userId,
 					};
 
-					let newAttributes = copy.immutable(baseData, req.body, ["siteName", "subdomainName"]);
+					let newAttributes = copy.immutable(baseData, req.body, ["siteName", "subdomainName", "presetId"]);
 					return site.save(newAttributes);
 				} else {
-					let newAttributes = copy.immutable({}, req.body, ["siteName"]);
+					let newAttributes = copy.immutable({}, req.body, ["siteName", "presetId"]);
 					return site.save(newAttributes, {patch: true});
 				}
 			}).then(() => {
