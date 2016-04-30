@@ -75,7 +75,7 @@ module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBas
 					.save();
 			}).tap((user) => {
 				return mailer.send("confirmation", user.get("email"), emailSubjects.confirmEmail, {
-					confirmationKey: user.get("confirmationKey"),
+					user: user.toJSON(),
 					site: cmsBase
 				});
 			}).then((user) => {
@@ -105,7 +105,9 @@ module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBas
 				let welcomeTemplate = (siteLaunched) ? "postlaunch-welcome" : "prelaunch-welcome";
 				let welcomeSubject = (siteLaunched) ? emailSubjects.postLaunchWelcome : emailSubjects.preLaunchWelcome;
 
-				return mailer.send(welcomeTemplate, user.get("email"), welcomeSubject);
+				return mailer.send(welcomeTemplate, user.get("email"), welcomeSubject, {
+					user: user
+				});
 			}).then((user) => {
 				res.status(204).end();
 			}).catch(bookshelf.NotFoundError, (err) => {
