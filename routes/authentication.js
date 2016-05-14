@@ -76,7 +76,11 @@ module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBas
 			}).tap((user) => {
 				return mailer.send("confirmation", user.get("email"), emailSubjects.confirmEmail, {
 					user: user.toJSON(),
-					site: cmsBase
+					site: cmsBase,
+					/* We must explicitly specify the confirmationKey, because
+					 * this is set as 'hidden' in the model, and so will not be
+					 * included in the plain user object. */
+					confirmationKey: user.get("confirmationKey")
 				});
 			}).then((user) => {
 				res.json(user.toJSON());

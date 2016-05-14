@@ -162,5 +162,7 @@ Promise.try(() => {
 	/* Error handling */
 	app.use(errorHandler(state));
 
-	app.listen(config.listen.port, config.listen.host);
+	app.listen(config.listen.port, config.listen.host, function() {
+		console.log("Listening...");
+	});
 })
