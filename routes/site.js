@@ -7,6 +7,7 @@ const rfr = require("rfr");
 const apiRouter = rfr("lib/api-router");
 const errors = rfr("lib/errors");
 const copy = rfr("lib/copy-properties");
+const detectUniqueViolation = rfr("lib/model/detect-unique-violation");
 
 module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 	let router = apiRouter();
@@ -49,7 +50,7 @@ module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 				}
 			}).then(() => {
 				res.status(204).end();
-			});
+			}).catch(detectUniqueViolation);;
 		}]
 	});
 

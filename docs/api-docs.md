@@ -81,6 +81,10 @@ Creates a new user account. The following fields are accepted:
 * __password__: Must be between 8 and 1024 characters, and contain at least one number or special character. This field will likely be removed in the future, in favour of setting a password after e-mail confirmation.
 * __address1__, __address2__, __city__, __state__, __postalCode__, __country__: *Optional.* Further user information.
 
+Possible route-specific responses:
+
+* __409__: A user with the specified e-mail address already exists.
+
 ### POST /confirm/:confirmationKey
 
 Attempts to confirm an e-mail address for the given `confirmationKey` parameter.
@@ -179,6 +183,7 @@ Allowed fields for modification of an existing site:
 Possible route-specific responses:
 
 * __204__: Site update successful.
+* __409__: A site with the specified subdomain already exists (when attempting to create a new site).
 
 ### POST /generate-token
 
