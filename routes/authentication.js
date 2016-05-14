@@ -106,7 +106,7 @@ module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBas
 				let welcomeSubject = (siteLaunched) ? emailSubjects.postLaunchWelcome : emailSubjects.preLaunchWelcome;
 
 				return mailer.send(welcomeTemplate, user.get("email"), welcomeSubject, {
-					user: user
+					user: user.toJSON()
 				});
 			}).then((user) => {
 				res.status(204).end();
