@@ -44,6 +44,7 @@ Also known as a 'theme'.
 * __thumbnail__: A URL to the thumbnail for the preset, if any.
 * __url__: Where the preset archive can be downloaded from.
 * __isEnabled__: Whether the preset is currently available.
+* __isAvailable__: property: Whether the user can select this preset on their current plan.
 * __createdAt__: Timestamp, when the user account was registered.
 * __updatedAt__: Timestamp, when the properties of the user were last changed.
 
@@ -147,7 +148,7 @@ Possible route-specific responses:
 * __401__: Invalid `oldPassword`. Message is one of:
 	* "No previous password specified, but user is not a new user."
 	* "Invalid previous password specified."
-	
+
 ### GET /profile
 
 Only accessible to those with `unconfirmed` role or above.
@@ -167,7 +168,7 @@ Modifies the User object for the current user. Allowed changes:
 Possible route-specific responses:
 
 * __204__: Profile update successful.
-	
+
 ### GET /site
 
 Only accessible to those with `member` role or above.
