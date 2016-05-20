@@ -97,7 +97,8 @@ Promise.try(() => {
 		mailer: mailerInstance,
 		emailSubjects: config.emailSubjects,
 		environment: environment,
-		loginOptions: config.loginThrottling
+		loginOptions: config.loginThrottling,
+		defaultPlanId: config.defaultPlan
 	}
 	
 	firebase.onAuth(function(authData) {

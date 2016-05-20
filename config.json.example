@@ -47,5 +47,6 @@
 			"userBlock": 20
 		},
 		"attemptExpiry": "30m"
-	}
+	},
+	"defaultPlan": 1
 }

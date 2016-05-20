@@ -11,7 +11,7 @@ const encodeKey = rfr("lib/firebase/encode-key");
 const checkAllowedAttributes = rfr("lib/model/check-allowed-attributes");
 const saveValidationHook = rfr("lib/model/save-validation-hook");
 
-module.exports = function({bookshelf, firebase, firebaseAuthenticationPromise, hostedDomain, digitalOcean, deploymentIp}) {
+module.exports = function({bookshelf, firebase, firebaseAuthenticationPromise, hostedDomain, digitalOcean, deploymentIp, defaultPlanId}) {
 	bookshelf.model("Site", {
 		tableName: "sites",
 		hasTimestamps: ["createdAt", "updatedAt"],
@@ -28,6 +28,10 @@ module.exports = function({bookshelf, firebase, firebaseAuthenticationPromise, h
 			return this.belongsTo("Preset", "presetId");
 		},
 		
+		defaults: {
+			planId: defaultPlanId
+		},
+
 		validAttributes: [
 			"id",
 			"planId",
