@@ -96,7 +96,8 @@ Promise.try(() => {
 		digitalOcean: digitalOcean,
 		mailer: mailerInstance,
 		emailSubjects: config.emailSubjects,
-		environment: environment
+		environment: environment,
+		loginOptions: config.loginThrottling
 	}
 	
 	firebase.onAuth(function(authData) {

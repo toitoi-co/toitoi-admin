@@ -108,6 +108,19 @@ Possible route-specific responses:
 * __401__: Invalid login details. Message is one of:
 	* "No such account exists."
 	* "Invalid password."
+	* "Account has been blocked due to too many failed logins."
+	* "Invalid captcha."
+	
+Error responses for this route always include the following properties:
+
+* __ipFailures:__ The amount of failed logins from this IP address. Resets upon successful login.
+* __ipBlocked:__ Boolean. Whether this IP has been (temporarily) blocked from making further login attempts.
+* __needsCaptcha:__ Boolean. Whether a reCAPTCHA response is expected for the next request.
+
+They will also include the following properties, but *only* if a valid username was provided:
+
+* __userFailures:__ The amount of failed logins for this user. Resets upon successful login.
+* __userBlocked:__ Boolean. Whether this user has been blocked from making further login attempts. The block must currently be removed manually by an administrator.
 
 ### POST /logout
 

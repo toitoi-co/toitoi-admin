@@ -23,6 +23,9 @@
 		"apiKey": "",
 		"sender": ""
 	},
+	"recaptcha": {
+		"secretKey": "<recaptcha secret key goes here>"
+	},
 	"hostedDomain": "example.com",
 	"deploymentIp": "1.2.3.4",
 	"cmsBase": "http://cms.example.com",
@@ -36,5 +39,13 @@
 		"preLaunchWelcome": "Welcome to ExampleSite!",
 		"postLaunchWelcome": "Welcome to ExampleSite!",
 		"confirmEmail": "Please confirm your ExampleSite account"
+	},
+	"loginThrottling": {
+		"failureLimits": {
+			"captcha": 3,
+			"ipBlock": 5,
+			"userBlock": 20
+		},
+		"attemptExpiry": "30m"
 	}
 }

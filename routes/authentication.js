@@ -11,9 +11,20 @@ const errors = rfr("lib/errors");
 const copy = rfr("lib/copy-properties");
 const validatePassword = rfr("lib/validate-password");
 const detectUniqueViolation = rfr("lib/model/detect-unique-violation");
+const loginCounter = rfr("lib/login-counter");
+const recaptcha = rfr("lib/recaptcha");
 
-module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBase, siteLaunched, emailSubjects}) {
+module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBase, siteLaunched, emailSubjects, loginOptions, recaptchaKey}) {
 	let router = apiRouter();
+
+	let loginAttempts = loginCounter({
+		attemptExpiry: loginOptions.attemptExpiry,
+		captchaLimit: loginOptions.failureLimits.captcha,
+		blockLimit: loginOptions.failureLimits.ipBlock,
+		userBlockLimit: loginOptions.failureLimits.userBlock
+	});
+
+	let verifyRecaptcha = recaptcha(recaptchaKey);
 
 	router.apiRoute("/login", {
 		post: function(req, res, next) {
@@ -31,18 +42,39 @@ module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBas
 				});
 			}).then((user) => {
 				return Promise.try(() => {
+					if (loginAttempts.isBlocked(req.ip)) {
+						throw new errors.UnauthorizedError("Temporarily blocked from logging in.", loginAttempts.getStatistics(req.ip, user));
+					} else if (loginAttempts.needsCaptcha(req.ip)) {
+						return verifyRecaptcha(req.body["g-recaptcha-response"], req.ip);
+					} else if (user.get("failedLoginAttempts") >= loginOptions.failureLimits.userBlock) {
+						throw new errors.UnauthorizedError("Account has been blocked due to too many failed logins.", loginAttempts.getStatistics(req.ip, user))
+					}
+				}).then(() => {
 					return scrypt.verifyHash(req.body.password, user.get("hash"));
 				}).then((result) => {
 					return user;
-				})
+				}).catch(scrypt.PasswordError, (err) => {
+					return Promise.try(() => {
+						/* FIXME: Is there a nicer syntax for doing this? */
+						loginAttempts.increment(req.ip);
+
+						return bookshelf.model("User").query()
+							.increment("failedLoginAttempts")
+							.where({id: user.id});
+					}).then(() => {
+						throw new errors.UnauthorizedError("Invalid password.", loginAttempts.getStatistics(req.ip, user))
+					});
+				}).catch(errors.CaptchaError, (err) => {
+					throw new errors.UnauthorizedError("Invalid captcha.", loginAttempts.getStatistics(req.ip, user));
+				});
 			}).then((user) => {
+				loginAttempts.reset(req.ip);
 				req.session.userId = user.get("id");
 				res.header("X-API-Authenticated", "true");
 				res.json(user.toJSON());
 			}).catch(bookshelf.NotFoundError, (err) => {
-				throw new errors.UnauthorizedError("No such account exists.")
-			}).catch(scrypt.PasswordError, (err) => {
-				throw new errors.UnauthorizedError("Invalid password.")
+				loginAttempts.increment(req.ip);
+				throw new errors.UnauthorizedError("No such account exists.", loginAttempts.getStatistics(req.ip))
 			}).catch(checkit.Error, (err) => {
 				throw new errors.ValidationError("One or more fields were missing.", {errors: err.errors});
 			});

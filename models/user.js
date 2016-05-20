@@ -15,7 +15,7 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 	bookshelf.model("User", {
 		tableName: "users",
 		hasTimestamps: ["createdAt", "updatedAt"],
-		hidden: ["hash", "confirmationKey"],
+		hidden: ["hash", "confirmationKey", "passwordResetKey"],
 		
 		// MVP: Assuming a single site for now.
 		site: function() {
@@ -45,6 +45,9 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 			"signupFlowCompleted",
 			"onboardingFlowCompleted",
 			"confirmationKey",
+			"passwordResetKey",
+			"passwordResetExpiry",
+			"failedLoginAttempts",
 			"firstName",
 			"lastName",
 			"address1",
