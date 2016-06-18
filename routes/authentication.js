@@ -44,10 +44,12 @@ module.exports = function({acl, firebaseConfiguration, bookshelf, mailer, cmsBas
 				return Promise.try(() => {
 					if (loginAttempts.isBlocked(req.ip)) {
 						throw new errors.UnauthorizedError("Temporarily blocked from logging in.", loginAttempts.getStatistics(req.ip, user));
-					} else if (loginAttempts.needsCaptcha(req.ip)) {
-						return verifyRecaptcha(req.body["g-recaptcha-response"], req.ip);
 					} else if (user.get("failedLoginAttempts") >= loginOptions.failureLimits.userBlock) {
 						throw new errors.UnauthorizedError("Account has been blocked due to too many failed logins.", loginAttempts.getStatistics(req.ip, user))
+					} else if (loginAttempts.needsCaptcha(req.ip)) {
+						/* The CAPTCHA check has been temporarily disabled, because it didn't work (issue pending) */
+						// return verifyRecaptcha(req.body["g-recaptcha-response"], req.ip);
+						return true;
 					}
 				}).then(() => {
 					return scrypt.verifyHash(req.body.password, user.get("hash"));
