@@ -8,6 +8,7 @@ const apiRouter = rfr("lib/api-router");
 const errors = rfr("lib/errors");
 const copy = rfr("lib/copy-properties");
 const detectUniqueViolation = rfr("lib/model/detect-unique-violation");
+const validateSubdomain = rfr("lib/validate-subdomain");
 
 module.exports = function({acl, firebaseConfiguration, bookshelf, siteLaunched}) {
 	let router = apiRouter();
@@ -37,10 +38,22 @@ module.exports = function({acl, firebaseConfiguration, bookshelf, siteLaunched})
 				/* Start with a blank site if none exists yet. */
 				return bookshelf.model("Site").forge({});
 			}).then((site) => {
+				// FIXME: Check validity of `presetId` in the current plan
+
 				if (site.isNew()) {
 					let baseData = {
 						userId: req.session.userId,
 					};
+
+					// FIXME: Use checkit for this?
+					// FIXME: Should we do this check on /admin routes as well?
+					try {
+						if (req.body.subdomainName != null) {
+							validateSubdomain(req.body.subdomainName);
+						}
+					} catch (err) {
+						throw new errors.ValidationError(err.message);
+					}
 
 					let newAttributes;
 

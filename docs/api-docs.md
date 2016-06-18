@@ -198,6 +198,9 @@ Possible route-specific responses:
 
 * __204__: Site update successful.
 * __409__: A site with the specified subdomain already exists (when attempting to create a new site).
+* __422__: One or more fields did not pass validation. Possible route-specific error messages:
+	* "Subdomain can only contain alphanumeric characters and dashes"
+	* "Subdomain must be at least 5 characters long"
 
 ### POST /generate-token
 
