@@ -18,6 +18,7 @@ const sessionHandler = rfr("middleware/session-handler")
 const errorHandler = rfr("middleware/error-handler");
 const aclModule = rfr("lib/acl");
 const mailer = rfr("lib/email/mailer");
+const errors = rfr("lib/errors");
 
 let config = require("./config.json")
 
@@ -167,6 +168,12 @@ Promise.try(() => {
 	if (environment === "development") {
 		app.use(rfr("routes/development"));
 	}
+
+	/* Default 404 handler */
+
+	app.use(function(req, res, next) {
+		next(new errors.NotFoundError("No such route exists"));
+	});
 
 	/* Error handling */
 	app.use(errorHandler(state));
