@@ -66,6 +66,9 @@ module.exports = {
 	}, {
 		name: "subdomainName",
 		description: "Subdomain (without domain)"
+	}, {
+		name: "presetId",
+		description: "Preset ID"
 	}],
 	presets: [{
 		name: "planId",
