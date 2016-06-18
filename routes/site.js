@@ -9,7 +9,7 @@ const errors = rfr("lib/errors");
 const copy = rfr("lib/copy-properties");
 const detectUniqueViolation = rfr("lib/model/detect-unique-violation");
 
-module.exports = function({acl, firebaseConfiguration, bookshelf}) {
+module.exports = function({acl, firebaseConfiguration, bookshelf, siteLaunched}) {
 	let router = apiRouter();
 
 	router.apiRoute("/site", {
@@ -42,10 +42,24 @@ module.exports = function({acl, firebaseConfiguration, bookshelf}) {
 						userId: req.session.userId,
 					};
 
-					let newAttributes = copy.immutable(baseData, req.body, ["siteName", "subdomainName", "presetId"]);
+					let newAttributes;
+
+					if (siteLaunched) {
+						newAttributes = copy.immutable(baseData, req.body, ["siteName", "subdomainName", "presetId"]);
+					} else {
+						newAttributes = copy.immutable(baseData, req.body, ["siteName", "subdomainName"]);
+					}
+
 					return site.save(newAttributes);
 				} else {
-					let newAttributes = copy.immutable({}, req.body, ["siteName", "presetId"]);
+					let newAttributes;
+
+					if (siteLaunched) {
+						newAttributes = copy.immutable({}, req.body, ["siteName", "presetId"]);
+					} else {
+						newAttributes = copy.immutable({}, req.body, ["siteName"]);
+					}
+
 					return site.save(newAttributes, {patch: true});
 				}
 			}).then(() => {

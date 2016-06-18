@@ -146,11 +146,18 @@ Promise.try(() => {
 
 	/* Route setup */
 	app.use(rfr("routes/authentication")(state));
+
+	/* The following two will conditionally enable routes themselves, based on siteLaunched */
 	app.use(rfr("routes/profile")(state));
 	app.use(rfr("routes/site")(state));
-	app.use("/presets", acl.allow("member"), rfr("routes/presets")(state));
-	app.use("/generate-signed-request", acl.allow("member"), rfr("routes/signed-requests")(state));
 	
+	if (config.siteLaunched) {
+		/* These are just completely unnecessary until the site has launched */
+		app.use("/presets", acl.allow("member"), rfr("routes/presets")(state));
+		app.use("/generate-signed-request", acl.allow("member"), rfr("routes/signed-requests")(state));
+	}
+
+	/* Administrative tools should always be available */
 	app.use("/admin/users", acl.allow("admin"), rfr("routes/admin/users")(state));
 	app.use("/admin/roles", acl.allow("admin"), rfr("routes/admin/roles")(state));
 	app.use("/admin/plans", acl.allow("admin"), rfr("routes/admin/plans")(state));
