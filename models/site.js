@@ -99,6 +99,61 @@ module.exports = function({bookshelf, firebase, firebaseAuthenticationPromise, h
 					data: deploymentIp
 				});
 			});
+		},
+
+		isPresetAllowed: function(preset) {
+			return Promise.try(() => {
+				return Promise.all([
+					bookshelf.model("Preset").normalize(preset),
+					this.load("plan")
+				]);
+			}).spread((preset, _) => {
+				return (preset.get("planId") === this.related("plan").id);
+			});
+		},
+
+		validatePreset: function(preset) {
+			return Promise.try(() => {
+				return bookshelf.model("Preset").normalize(preset);
+			}).then((preset) => {
+				return site.isPresetAllowed(preset)
+			}).then((isAllowed) => {
+				if (!isAllowed) {
+					throw new errors.ValidationError("This preset is not allowed within the current plan");
+				}
+			});
+		},
+
+		/* TEMPORARY: The following only makes sense in MVP, where 1 user === 1 site */
+		changePlan: function(plan, preset) {
+			return Promise.try(() => {
+				return this.load("owner");
+			}).then(() => {
+				if (this.related("owner").hasPaymentInformation() === false) {
+					throw new errors.ForbiddenError("Cannot change plan until payment information has been configured");
+				} else if (preset == null) {
+					throw new errors.ValidationError("Cannot change plan without providing a corresponding new preset");
+				} else {
+					return Promise.all([
+						bookshelf.model("Plan").normalize(plan),
+						bookshelf.model("Preset").normalize(preset)
+					]);
+				}
+			}).spread((plan, preset) => {
+				if (plan == null) {
+					throw new errors.ValidationError("The specified planId doesn't exist");
+				} else if (preset == null) {
+					throw new errors.ValidationError("The specified presetId doesn't exist");
+				} else if (preset.get("planId") !== plan.get("id")) {
+					throw new errors.ValidationError("The specified presetId is not allowed for the new planId");
+				} else {
+					if (plan.id !== this.get("planId")) {
+						return this.related("owner").subscribeToPlan(plan);
+					} else {
+						// User already has this plan, so we will just do nothing.
+					}
+				}
+			});
 		}
 	})
 }

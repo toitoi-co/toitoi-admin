@@ -11,6 +11,7 @@ const FirebaseTokenGenerator = require("firebase-token-generator");
 const rfr = require("rfr");
 const cors = require("cors");
 const doWrapper = require("do-wrapper");
+const stripe = require("stripe");
 
 Promise.promisifyAll(doWrapper.prototype);
 
@@ -54,8 +55,10 @@ let bookshelf = require("bookshelf")(knex);
 
 bookshelf.plugin("registry");
 bookshelf.plugin("visibility");
+bookshelf.plugin(rfr("lib/bookshelf-plugins/normalize"));
 
 let digitalOcean = new doWrapper(config.digitalOcean.secret);
+let stripeAPI = stripe(config.stripe.secretKey);
 
 /* Firebase admin setup */
 let tokenGenerator = new FirebaseTokenGenerator(config.firebase.secret)
@@ -95,6 +98,7 @@ Promise.try(() => {
 		cmsBase: config.cmsBase,
 		siteLaunched: config.siteLaunched,
 		digitalOcean: digitalOcean,
+		stripeAPI: stripeAPI,
 		mailer: mailerInstance,
 		emailSubjects: config.emailSubjects,
 		environment: environment,

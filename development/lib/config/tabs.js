@@ -20,6 +20,9 @@ module.exports = [{
 			name: "Generate Firebase token",
 			tabName: "token"
 		}, {
+			name: "Store Stripe token",
+			tabName: "stripe"
+		}, {
 			name: "Log out",
 			tabName: "logout"
 		}]

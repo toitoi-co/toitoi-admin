@@ -9,7 +9,7 @@ const errors = rfr("lib/errors");
 const copy = rfr("lib/copy-properties");
 const validatePassword = rfr("lib/validate-password");
 
-module.exports = function({acl, firebaseConfiguration, bookshelf, siteLaunched}) {
+module.exports = function({acl, firebaseConfiguration, bookshelf, siteLaunched, stripeAPI}) {
 	let router = apiRouter();
 
 	router.apiRoute("/profile", {
@@ -85,6 +85,34 @@ module.exports = function({acl, firebaseConfiguration, bookshelf, siteLaunched})
 
 			}]
 		});
+
+		router.apiRoute("/stripe-token", {
+			post: [acl.allow("member"), function(req, res, next) {
+				return Promise.try(() => {
+					return checkit({
+						token: "required"
+					}).run(req.body);
+				}).then(() => {
+					return stripeAPI.customers.create({
+						source: req.body.token,
+						description: `${req.currentUser.get("firstName")} ${req.currentUser.get("lastName")}`,
+						email: req.currentUser.get("email")
+					});
+				}).then((customer) => {
+					return req.currentUser.save({
+						hasStripeToken: true,
+						stripeCustomerId: customer.id
+					}, {patch: true});
+				}).then(() => {
+					return req.currentUser.getPlan();
+				}).then((plan) => {
+					// FIXME: Handle error if the default plan doesn't exist. Add a wider configuration sanity check?
+					return req.currentUser.subscribeToPlan(plan);
+				}).then(() => {
+					res.status(204).end();
+				});
+			}]
+		})
 	}
 
 	return router

@@ -9,6 +9,7 @@ const errors = rfr("lib/errors");
 const copy = rfr("lib/copy-properties");
 const detectUniqueViolation = rfr("lib/model/detect-unique-violation");
 const validateSubdomain = rfr("lib/validate-subdomain");
+const concatConditionally = rfr("lib/concat-conditionally");
 
 module.exports = function({acl, firebaseConfiguration, bookshelf, siteLaunched}) {
 	let router = apiRouter();
@@ -38,46 +39,44 @@ module.exports = function({acl, firebaseConfiguration, bookshelf, siteLaunched})
 				/* Start with a blank site if none exists yet. */
 				return bookshelf.model("Site").forge({});
 			}).then((site) => {
-				// FIXME: Check validity of `presetId` in the current plan
+				return Promise.try(() => {
+					if (req.body.planId != null) {
+						return site.changePlan(req.body.planId, req.body.presetId);
+					} else if (req.body.presetId != null) {
+						return site.validatePreset(req.body.presetId);
+					}
+				}).then(() => {
+					let copyableAttributes = concatConditionally(["siteName"], [{
+						add: "subdomainName",
+						if: site.isNew()
+					}, {
+						add: ["presetId", "planId"],
+						if: siteLaunched
+					}]);
 
-				if (site.isNew()) {
-					let baseData = {
-						userId: req.session.userId,
-					};
+					if (site.isNew()) {
+						let baseData = {
+							userId: req.session.userId,
+						};
 
-					// FIXME: Use checkit for this?
-					// FIXME: Should we do this check on /admin routes as well?
-					try {
-						if (req.body.subdomainName != null) {
-							validateSubdomain(req.body.subdomainName);
+						// FIXME: Use checkit for this?
+						// FIXME: Should we do this check on /admin routes as well?
+						try {
+							if (req.body.subdomainName != null) {
+								validateSubdomain(req.body.subdomainName);
+							}
+						} catch (err) {
+							throw new errors.ValidationError(err.message);
 						}
-					} catch (err) {
-						throw new errors.ValidationError(err.message);
-					}
 
-					let newAttributes;
-
-					if (siteLaunched) {
-						newAttributes = copy.immutable(baseData, req.body, ["siteName", "subdomainName", "presetId"]);
+						return site.save(copy.immutable(baseData, req.body, copyableAttributes));
 					} else {
-						newAttributes = copy.immutable(baseData, req.body, ["siteName", "subdomainName"]);
+						return site.save(copy.immutable({}, req.body, copyableAttributes), {patch: true});
 					}
-
-					return site.save(newAttributes);
-				} else {
-					let newAttributes;
-
-					if (siteLaunched) {
-						newAttributes = copy.immutable({}, req.body, ["siteName", "presetId"]);
-					} else {
-						newAttributes = copy.immutable({}, req.body, ["siteName"]);
-					}
-
-					return site.save(newAttributes, {patch: true});
-				}
+				})
 			}).then(() => {
 				res.status(204).end();
-			}).catch(detectUniqueViolation);;
+			}).catch(detectUniqueViolation);
 		}]
 	});
 

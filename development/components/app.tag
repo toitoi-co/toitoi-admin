@@ -55,6 +55,26 @@ app
 			
 	tab(tabName="token", title="Generate Firebase token")
 		json-form(route="/generate-token", method="POST")
+			
+	tab(tabName="stripe", title="Store Stripe token")
+		form#stripe-form(onsubmit="{parent.generateStripe}")
+			div.field
+				label Card Number:
+				input(type="text", data-stripe="number")
+			div.field
+				label Expiration:
+				input(type="text", size=2, data-stripe="exp_month")
+				input(type="text", size=2, data-stripe="exp_year")
+			div.field
+				label CVC:
+				input(type="text", data-stripe="cvc")
+			div.field
+				button(type="submit") Retrieve token
+	
+		json-form(route="/stripe-token", method="POST")
+			div.field
+				label Token:
+				input#stripe-token(type="text", name="token")
 	
 	tab(tabName="logout", title="Log out")
 		json-form(route="/logout", method="POST")
@@ -210,6 +230,20 @@ app
 						authStatus: false
 					});
 				}
+			},
+			generateStripe: (event) => {
+				let responseViewer = this.tags["response-viewer"];
+				
+				Stripe.card.createToken(document.querySelector("#stripe-form"), (status, response) => {
+					if (status === 200) {
+						responseViewer.done(response);
+						document.querySelector("#stripe-token").value = response.id;
+					} else {
+						responseViewer.error(response);
+					}
+				});
+
+				event.preventDefault();
 			}
 		});
 		

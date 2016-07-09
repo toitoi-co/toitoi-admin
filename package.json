@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/toitoi-co/toitoi-admin#readme",
   "dependencies": {
+    "assure-array": "0.0.1",
     "babel-cli": "^6.6.5",
     "bhttp": "^1.2.1",
     "bluebird": "^3.3.5",
@@ -48,6 +49,8 @@
     "riot": "^2.3.18",
     "riot-query": "0.0.2",
     "scrypt-for-humans": "^2.0.2",
+    "stripe": "^4.7.0",
+    "type-of-is": "^3.4.0",
     "uuid": "^2.0.2"
   },
   "devDependencies": {

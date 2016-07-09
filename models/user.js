@@ -11,11 +11,11 @@ const checkAllowedAttributes = rfr("lib/model/check-allowed-attributes");
 const saveValidationHook = rfr("lib/model/save-validation-hook");
 const parseBooleanFields = rfr("lib/model/parse-boolean-fields");
 
-module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, firebaseAuthenticationPromise, firebaseTokenGenerator}) {
+module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, firebaseAuthenticationPromise, firebaseTokenGenerator, stripeAPI}) {
 	bookshelf.model("User", {
 		tableName: "users",
 		hasTimestamps: ["createdAt", "updatedAt"],
-		hidden: ["hash", "confirmationKey", "passwordResetKey"],
+		hidden: ["hash", "confirmationKey", "passwordResetKey", "stripeCustomerId", "stripeSubscriptionId"],
 		
 		// MVP: Assuming a single site for now.
 		site: function() {
@@ -29,11 +29,12 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 		defaults: {
 			isActive: true,
 			signupFlowCompleted: true,
-			onboardingFlowCompleted: false
+			onboardingFlowCompleted: false,
+			hasStripeToken: false
 		},
 		
 		parse: function(attributes) {
-			return parseBooleanFields(attributes, ["isActive", "signupFlowCompleted", "onboardingFlowCompleted"]);
+			return parseBooleanFields(attributes, ["isActive", "signupFlowCompleted", "onboardingFlowCompleted", "hasStripeToken"]);
 		},
 		
 		validAttributes: [
@@ -44,6 +45,9 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 			"isActive",
 			"signupFlowCompleted",
 			"onboardingFlowCompleted",
+			"hasStripeToken",
+			"stripeCustomerId",
+			"stripeSubscriptionId",
 			"confirmationKey",
 			"passwordResetKey",
 			"passwordResetExpiry",
@@ -104,6 +108,33 @@ module.exports = function({bookshelf, acl, firebaseConfiguration, firebase, fire
 			}, options);
 		},
 		
+		hasPaymentInformation: function() {
+			return !!(this.get("hasStripeToken"));
+		},
+
+		subscribeToPlan: function(plan) {
+			return Promise.try(() => {
+				return stripeAPI.subscriptions.list({
+					customer: this.get("stripeCustomerId")
+				});
+			}).then((subscriptions) => {
+				if (subscriptions.data.length > 0) {
+					/* Switch the subscription to a different plan.
+					 * TEMPORARY: Assume a single subscription per user for now. */
+					let subscription = subscriptions.data[0];
+
+					return stripeAPI.subscriptions.update(subscription.id, {
+						plan: plan.get("stripePlanId")
+					});
+				} else {
+					return stripeAPI.subscriptions.create({
+						customer: this.get("stripeCustomerId"),
+						plan: plan.get("stripePlanId")
+					});
+				}
+			});
+		},
+
 		/* TEMPORARY: The following only applies to the MVP, where each user can have exactly one site. */
 		getPrimarySite: function() {
 			return Promise.try(() => {

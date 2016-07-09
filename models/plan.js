@@ -24,6 +24,7 @@ module.exports = function({bookshelf}) {
 		validAttributes: [
 			"id",
 			"name",
+			"stripePlanId", // FIXME: This should be required (ie. NOT NULL)...
 			"createdAt",
 			"updatedAt"
 		],

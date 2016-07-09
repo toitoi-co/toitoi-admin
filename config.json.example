@@ -26,6 +26,10 @@
 	"recaptcha": {
 		"secretKey": "<recaptcha secret key goes here>"
 	},
+	"stripe": {
+		"secretKey": "<stripe secret key goes here>",
+		"publicKey": "<stripe public key goes here>"
+	},
 	"hostedDomain": "example.com",
 	"deploymentIp": "1.2.3.4",
 	"cmsBase": "http://cms.example.com",
